@@ -1,0 +1,298 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Apple, Activity, FileText, Upload, Heart, Moon, Footprints, Stethoscope, FlaskConical, CheckCircle2, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export const Route = createFileRoute("/dane")({
+  head: () => ({
+    meta: [
+      { title: "Dane — MoveLens" },
+      { name: "description", content: "Twoje dane o zdrowiu w jednym miejscu. Import z Apple Health, Google Fit i wyników badań." },
+    ],
+  }),
+  component: DataPage,
+});
+
+type SourceKey = "apple" | "google" | "labs";
+
+function DataPage() {
+  const [imported, setImported] = useState<Record<SourceKey, boolean>>({
+    apple: true,
+    google: false,
+    labs: true,
+  });
+  const [doctorOpen, setDoctorOpen] = useState(false);
+
+  const toggle = (k: SourceKey) => setImported((s) => ({ ...s, [k]: !s[k] }));
+
+  return (
+    <div className="px-5 pt-8">
+      <header className="mb-5">
+        <h1 className="text-3xl font-semibold tracking-tight">Dane</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Połącz rozproszone źródła w jeden, czytelny obraz Twojego zdrowia.
+        </p>
+      </header>
+
+      <section className="space-y-3">
+        <SourceCard
+          k="apple"
+          icon={Apple}
+          title="Apple Health"
+          desc="Import z pliku export.xml"
+          connected={imported.apple}
+          onToggle={toggle}
+        />
+        <SourceCard
+          k="google"
+          icon={Activity}
+          title="Google Fit · Health Connect"
+          desc="Połącz z kontem Google"
+          connected={imported.google}
+          onToggle={toggle}
+        />
+        <SourceCard
+          k="labs"
+          icon={FileText}
+          title="Wyniki badań"
+          desc="Wgraj PDF z laboratorium"
+          connected={imported.labs}
+          onToggle={toggle}
+        />
+      </section>
+
+      {/* Najważniejsze wskaźniki */}
+      <section className="mt-6 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Najważniejsze wskaźniki</h2>
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <Indicator icon={Heart} label="Tętno spoczynkowe" value="58" unit="bpm" status="good" />
+          <Indicator icon={Moon} label="Sen (7 dni)" value="7:08" unit="h" status="good" />
+          <Indicator icon={Footprints} label="Aktywność" value="6 240" unit="kroków" status="warn" hint="poniżej celu" />
+          <Indicator icon={FlaskConical} label="Witamina D" value="22" unit="ng/ml" status="warn" hint="lekko obniżona" />
+        </div>
+      </section>
+
+      {/* Wnioski */}
+      <section className="mt-5 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Wnioski</h2>
+        <ul className="mt-3 space-y-3">
+          <Insight
+            title="Regeneracja jest stabilna"
+            body="HR spoczynkowe i HRV utrzymują się w dobrym zakresie od 2 tygodni — możesz spokojnie trenować."
+          />
+          <Insight
+            title="Rozważ suplementację witaminy D"
+            body="Twój ostatni wynik (22 ng/ml) sugeruje konsultację z lekarzem. To częsty problem zimą."
+          />
+          <Insight
+            title="Sen i jakość treningu idą w parze"
+            body="W dni z >7 h snu Twój Form Score jest średnio o 9 pkt wyższy."
+          />
+        </ul>
+      </section>
+
+      {/* Oś czasu */}
+      <section className="mt-5 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Oś czasu zdrowia</h2>
+        <ol className="mt-4 space-y-4 border-l border-hairline pl-5">
+          <Timeline icon={Activity} date="Dziś" title="6 240 kroków" body="Niska aktywność — krótszy spacer." color="warn" />
+          <Timeline icon={Heart} date="Wczoraj" title="Trening: przysiady" body="30 powtórzeń, Form Score 83." color="good" />
+          <Timeline icon={Moon} date="Noc 26/27" title="Sen 7 h 38 min" body="Głęboki sen 1 h 22 min." color="good" />
+          <Timeline icon={FlaskConical} date="3 dni temu" title="Wyniki badań" body="Morfologia w normie. Witamina D obniżona." color="warn" />
+          <Timeline icon={Stethoscope} date="2 tygodnie temu" title="Wizyta — fizjoterapia" body="Plan mobilności bioder." color="good" />
+        </ol>
+      </section>
+
+      {/* CTA dla lekarza */}
+      <section className="mt-5 mb-2 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
+        <h2 className="text-base font-semibold">Podsumowanie dla lekarza</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Wygeneruj 1-stronicowy raport z najważniejszymi wskaźnikami i trendami — do pokazania na wizycie.
+        </p>
+        <button
+          onClick={() => setDoctorOpen(true)}
+          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-deep"
+        >
+          Generuj podsumowanie <ArrowRight className="h-4 w-4" />
+        </button>
+      </section>
+
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        MoveLens wspiera świadomy ruch i nie zastępuje konsultacji z lekarzem ani fizjoterapeutą.
+      </p>
+
+      {doctorOpen && <DoctorSheet onClose={() => setDoctorOpen(false)} />}
+    </div>
+  );
+}
+
+function SourceCard({
+  k,
+  icon: Icon,
+  title,
+  desc,
+  connected,
+  onToggle,
+}: {
+  k: SourceKey;
+  icon: any;
+  title: string;
+  desc: string;
+  connected: boolean;
+  onToggle: (k: SourceKey) => void;
+}) {
+  return (
+    <div className="flex items-center gap-4 rounded-3xl border border-hairline bg-card p-4 shadow-sm">
+      <div className="rounded-2xl bg-tint p-3">
+        <Icon className="h-5 w-5 text-primary-deep" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-medium">{title}</p>
+        <p className="text-xs text-muted-foreground">{desc}</p>
+      </div>
+      <button
+        onClick={() => onToggle(k)}
+        className={cn(
+          "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium",
+          connected ? "bg-tint text-primary-deep" : "bg-primary text-primary-foreground",
+        )}
+      >
+        {connected ? (
+          <>
+            <CheckCircle2 className="h-3.5 w-3.5" /> Połączono
+          </>
+        ) : (
+          <>
+            <Upload className="h-3.5 w-3.5" /> Importuj
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
+function Indicator({
+  icon: Icon,
+  label,
+  value,
+  unit,
+  status,
+  hint,
+}: {
+  icon: any;
+  label: string;
+  value: string;
+  unit: string;
+  status: "good" | "warn";
+  hint?: string;
+}) {
+  const dot = status === "good" ? "bg-good" : "bg-warn";
+  return (
+    <div className="rounded-2xl border border-hairline p-3">
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4 text-primary-deep" />
+        <span className="text-xs text-muted-foreground">{label}</span>
+      </div>
+      <div className="mt-2 flex items-baseline gap-1">
+        <span className="text-xl font-semibold tabular-nums">{value}</span>
+        <span className="text-xs text-muted-foreground">{unit}</span>
+        <span className={cn("ml-auto h-2 w-2 rounded-full", dot)} />
+      </div>
+      {hint && <p className="mt-1 text-[11px] text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
+
+function Insight({ title, body }: { title: string; body: string }) {
+  return (
+    <li className="flex gap-3">
+      <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
+      <div>
+        <p className="text-sm font-medium">{title}</p>
+        <p className="text-sm text-muted-foreground">{body}</p>
+      </div>
+    </li>
+  );
+}
+
+function Timeline({ icon: Icon, date, title, body, color }: { icon: any; date: string; title: string; body: string; color: "good" | "warn" }) {
+  return (
+    <li className="relative">
+      <span className={cn("absolute -left-[27px] flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-card", color === "good" ? "bg-good" : "bg-warn")}>
+        <Icon className="h-2.5 w-2.5 text-white" />
+      </span>
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">{date}</p>
+      <p className="mt-0.5 text-sm font-medium">{title}</p>
+      <p className="text-sm text-muted-foreground">{body}</p>
+    </li>
+  );
+}
+
+function DoctorSheet({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end bg-black/50 backdrop-blur-sm sm:items-center sm:justify-center">
+      <div className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-card p-6 sm:rounded-3xl">
+        <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-hairline sm:hidden" />
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Podsumowanie dla lekarza</p>
+            <h2 className="text-xl font-semibold">Jan Kowalski · 34 lata</h2>
+            <p className="text-xs text-muted-foreground">Wygenerowano {new Date().toLocaleDateString("pl-PL")}</p>
+          </div>
+          <button onClick={onClose} className="rounded-full bg-tint px-3 py-1 text-xs">Zamknij</button>
+        </div>
+
+        <Section title="Wskaźniki podstawowe">
+          <Row k="Tętno spoczynkowe (śr. 30 dni)" v="58 bpm" />
+          <Row k="HRV (śr. 30 dni)" v="64 ms" />
+          <Row k="Ciśnienie (ost. pomiar)" v="118/76 mmHg" />
+          <Row k="Sen (śr.)" v="7 h 08 min" />
+        </Section>
+
+        <Section title="Wyniki badań (ost. 3 mies.)">
+          <Row k="Morfologia" v="w normie" />
+          <Row k="Glukoza na czczo" v="91 mg/dl" />
+          <Row k="Witamina D" v="22 ng/ml ⚠ obniżona" />
+          <Row k="TSH" v="2,1 µIU/ml" />
+        </Section>
+
+        <Section title="Aktywność i trening">
+          <Row k="Średnio kroków/dzień" v="7 820" />
+          <Row k="Treningi (30 dni)" v="14 sesji" />
+          <Row k="Średni Form Score" v="79 / 100" />
+        </Section>
+
+        <Section title="Obserwacje">
+          <p className="text-sm text-muted-foreground">
+            Wzrost jakości wykonywania przysiadu (+20 pkt w 6 tyg.). Stabilna regeneracja. Sugerowana konsultacja w sprawie witaminy D.
+          </p>
+        </Section>
+
+        <button
+          onClick={onClose}
+          className="mt-5 w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-deep"
+        >
+          Gotowe
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mt-5">
+      <h3 className="text-xs font-semibold uppercase tracking-wider text-primary-deep">{title}</h3>
+      <div className="mt-2 space-y-1">{children}</div>
+    </div>
+  );
+}
+
+function Row({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="flex items-center justify-between border-b border-hairline py-1.5 text-sm last:border-0">
+      <span className="text-muted-foreground">{k}</span>
+      <span className="font-medium">{v}</span>
+    </div>
+  );
+}

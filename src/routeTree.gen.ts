@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PostepyRouteImport } from './routes/postepy'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CwiczIndexRouteImport } from './routes/cwicz.index'
 import { Route as CwiczExercisePrepRouteImport } from './routes/cwicz.$exercise.prep'
 import { Route as CwiczExerciseLiveRouteImport } from './routes/cwicz.$exercise.live'
 
+const PostepyRoute = PostepyRouteImport.update({
+  id: '/postepy',
+  path: '/postepy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,12 +43,14 @@ const CwiczExerciseLiveRoute = CwiczExerciseLiveRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/postepy': typeof PostepyRoute
   '/cwicz/': typeof CwiczIndexRoute
   '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
   '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/postepy': typeof PostepyRoute
   '/cwicz': typeof CwiczIndexRoute
   '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
   '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
@@ -50,18 +58,30 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/postepy': typeof PostepyRoute
   '/cwicz/': typeof CwiczIndexRoute
   '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
   '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cwicz/' | '/cwicz/$exercise/live' | '/cwicz/$exercise/prep'
+  fullPaths:
+    | '/'
+    | '/postepy'
+    | '/cwicz/'
+    | '/cwicz/$exercise/live'
+    | '/cwicz/$exercise/prep'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cwicz' | '/cwicz/$exercise/live' | '/cwicz/$exercise/prep'
+  to:
+    | '/'
+    | '/postepy'
+    | '/cwicz'
+    | '/cwicz/$exercise/live'
+    | '/cwicz/$exercise/prep'
   id:
     | '__root__'
     | '/'
+    | '/postepy'
     | '/cwicz/'
     | '/cwicz/$exercise/live'
     | '/cwicz/$exercise/prep'
@@ -69,6 +89,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PostepyRoute: typeof PostepyRoute
   CwiczIndexRoute: typeof CwiczIndexRoute
   CwiczExerciseLiveRoute: typeof CwiczExerciseLiveRoute
   CwiczExercisePrepRoute: typeof CwiczExercisePrepRoute
@@ -76,6 +97,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/postepy': {
+      id: '/postepy'
+      path: '/postepy'
+      fullPath: '/postepy'
+      preLoaderRoute: typeof PostepyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -109,6 +137,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PostepyRoute: PostepyRoute,
   CwiczIndexRoute: CwiczIndexRoute,
   CwiczExerciseLiveRoute: CwiczExerciseLiveRoute,
   CwiczExercisePrepRoute: CwiczExercisePrepRoute,
