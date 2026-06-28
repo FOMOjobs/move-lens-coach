@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Dumbbell, Activity, Stretch, Footprints } from "lucide-react";
+import { ArrowRight, Dumbbell, Activity, Minus, Footprints } from "lucide-react";
 
 export const Route = createFileRoute("/cwicz/")({
   head: () => ({
