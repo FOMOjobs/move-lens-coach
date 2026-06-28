@@ -9,38 +9,121 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PostepyRouteImport } from './routes/postepy'
+import { Route as DaneRouteImport } from './routes/dane'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CwiczIndexRouteImport } from './routes/cwicz.index'
+import { Route as CwiczExercisePrepRouteImport } from './routes/cwicz.$exercise.prep'
+import { Route as CwiczExerciseLiveRouteImport } from './routes/cwicz.$exercise.live'
 
+const PostepyRoute = PostepyRouteImport.update({
+  id: '/postepy',
+  path: '/postepy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DaneRoute = DaneRouteImport.update({
+  id: '/dane',
+  path: '/dane',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CwiczIndexRoute = CwiczIndexRouteImport.update({
+  id: '/cwicz/',
+  path: '/cwicz/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CwiczExercisePrepRoute = CwiczExercisePrepRouteImport.update({
+  id: '/cwicz/$exercise/prep',
+  path: '/cwicz/$exercise/prep',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CwiczExerciseLiveRoute = CwiczExerciseLiveRouteImport.update({
+  id: '/cwicz/$exercise/live',
+  path: '/cwicz/$exercise/live',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dane': typeof DaneRoute
+  '/postepy': typeof PostepyRoute
+  '/cwicz/': typeof CwiczIndexRoute
+  '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
+  '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dane': typeof DaneRoute
+  '/postepy': typeof PostepyRoute
+  '/cwicz': typeof CwiczIndexRoute
+  '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
+  '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dane': typeof DaneRoute
+  '/postepy': typeof PostepyRoute
+  '/cwicz/': typeof CwiczIndexRoute
+  '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
+  '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/dane'
+    | '/postepy'
+    | '/cwicz/'
+    | '/cwicz/$exercise/live'
+    | '/cwicz/$exercise/prep'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/dane'
+    | '/postepy'
+    | '/cwicz'
+    | '/cwicz/$exercise/live'
+    | '/cwicz/$exercise/prep'
+  id:
+    | '__root__'
+    | '/'
+    | '/dane'
+    | '/postepy'
+    | '/cwicz/'
+    | '/cwicz/$exercise/live'
+    | '/cwicz/$exercise/prep'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DaneRoute: typeof DaneRoute
+  PostepyRoute: typeof PostepyRoute
+  CwiczIndexRoute: typeof CwiczIndexRoute
+  CwiczExerciseLiveRoute: typeof CwiczExerciseLiveRoute
+  CwiczExercisePrepRoute: typeof CwiczExercisePrepRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/postepy': {
+      id: '/postepy'
+      path: '/postepy'
+      fullPath: '/postepy'
+      preLoaderRoute: typeof PostepyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dane': {
+      id: '/dane'
+      path: '/dane'
+      fullPath: '/dane'
+      preLoaderRoute: typeof DaneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +131,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cwicz/': {
+      id: '/cwicz/'
+      path: '/cwicz'
+      fullPath: '/cwicz/'
+      preLoaderRoute: typeof CwiczIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cwicz/$exercise/prep': {
+      id: '/cwicz/$exercise/prep'
+      path: '/cwicz/$exercise/prep'
+      fullPath: '/cwicz/$exercise/prep'
+      preLoaderRoute: typeof CwiczExercisePrepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cwicz/$exercise/live': {
+      id: '/cwicz/$exercise/live'
+      path: '/cwicz/$exercise/live'
+      fullPath: '/cwicz/$exercise/live'
+      preLoaderRoute: typeof CwiczExerciseLiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DaneRoute: DaneRoute,
+  PostepyRoute: PostepyRoute,
+  CwiczIndexRoute: CwiczIndexRoute,
+  CwiczExerciseLiveRoute: CwiczExerciseLiveRoute,
+  CwiczExercisePrepRoute: CwiczExercisePrepRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
