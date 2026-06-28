@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CwiczIndexRouteImport } from './routes/cwicz.index'
+import { Route as CwiczExercisePrepRouteImport } from './routes/cwicz.$exercise.prep'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const CwiczIndexRoute = CwiczIndexRouteImport.update({
   path: '/cwicz/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CwiczExercisePrepRoute = CwiczExercisePrepRouteImport.update({
+  id: '/cwicz/$exercise/prep',
+  path: '/cwicz/$exercise/prep',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cwicz/': typeof CwiczIndexRoute
+  '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cwicz': typeof CwiczIndexRoute
+  '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cwicz/': typeof CwiczIndexRoute
+  '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cwicz/'
+  fullPaths: '/' | '/cwicz/' | '/cwicz/$exercise/prep'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cwicz'
-  id: '__root__' | '/' | '/cwicz/'
+  to: '/' | '/cwicz' | '/cwicz/$exercise/prep'
+  id: '__root__' | '/' | '/cwicz/' | '/cwicz/$exercise/prep'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CwiczIndexRoute: typeof CwiczIndexRoute
+  CwiczExercisePrepRoute: typeof CwiczExercisePrepRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CwiczIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cwicz/$exercise/prep': {
+      id: '/cwicz/$exercise/prep'
+      path: '/cwicz/$exercise/prep'
+      fullPath: '/cwicz/$exercise/prep'
+      preLoaderRoute: typeof CwiczExercisePrepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CwiczIndexRoute: CwiczIndexRoute,
+  CwiczExercisePrepRoute: CwiczExercisePrepRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
