@@ -193,7 +193,7 @@ function LivePage() {
       </div>
 
       {/* Pierścień Form Score (prawy bok) */}
-      {isSquat && (
+      {isSquat && feedback?.ready && (
         <div className="absolute right-4 top-28 z-10 rounded-3xl bg-black/35 p-2 backdrop-blur">
           <Ring
             value={formScore}
@@ -231,8 +231,25 @@ function LivePage() {
         Analiza lokalnie. Obraz nie jest wysyłany.
       </div>
 
+      {/* Coaching ustawienia — gdy sylwetka nie jest pewnie w kadrze */}
+      {isSquat && status === "ready" && !summary && feedback && !feedback.ready && (
+        <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-8 text-center">
+          <div className="mx-auto max-w-xs rounded-3xl bg-black/55 px-5 py-4 backdrop-blur">
+            <p className="text-base font-semibold">Ustaw się do analizy</p>
+            <p className="mt-1 text-sm text-white/80">{feedback.coach}</p>
+          </div>
+        </div>
+      )}
+      {isSquat && status === "ready" && !summary && !feedback && (
+        <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-8 text-center">
+          <div className="mx-auto max-w-xs rounded-3xl bg-black/55 px-5 py-4 backdrop-blur">
+            <p className="text-sm text-white/80">Nie wykrywam sylwetki — wejdź w kadr.</p>
+          </div>
+        </div>
+      )}
+
       {/* Chipy podpowiedzi */}
-      {isSquat && feedback && (
+      {isSquat && feedback?.ready && (
         <div className="absolute inset-x-0 bottom-28 z-10 flex flex-wrap justify-center gap-2 px-4">
           <Chip label="Głębokość" {...feedback.chips.depth} />
           <Chip label="Kolana" {...feedback.chips.knees} />
@@ -283,7 +300,9 @@ function Chip({ label, status, hint }: { label: string; status: "ok" | "warn" | 
       ? "bg-warn/90 text-foreground"
       : status === "bad"
         ? "bg-bad/90 text-white"
-        : "bg-primary/90 text-primary-foreground";
+        : status === "idle"
+          ? "bg-white/15 text-white/80"
+          : "bg-primary/90 text-primary-foreground";
   return (
     <div className={cn("rounded-full px-3 py-1.5 text-xs font-medium shadow-sm backdrop-blur", cls)}>
       <span className="opacity-80">{label}:</span> <span className="font-semibold">{hint}</span>

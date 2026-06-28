@@ -5,6 +5,12 @@
 
 export type Pt = { x: number; y: number; visibility?: number };
 
+/** Pewność wykrycia landmarku (0..1). Brak pola = traktujemy jak widoczny. */
+export function vis(p?: Pt): number {
+  if (!p) return 0;
+  return p.visibility ?? 1;
+}
+
 /** Kąt w punkcie B utworzony przez A-B-C, w stopniach (0..180). */
 export function angleAt(a: Pt, b: Pt, c: Pt): number {
   const v1x = a.x - b.x;
