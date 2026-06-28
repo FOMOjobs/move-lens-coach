@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CwiczIndexRouteImport } from './routes/cwicz.index'
 import { Route as CwiczExercisePrepRouteImport } from './routes/cwicz.$exercise.prep'
+import { Route as CwiczExerciseLiveRouteImport } from './routes/cwicz.$exercise.live'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,34 +29,48 @@ const CwiczExercisePrepRoute = CwiczExercisePrepRouteImport.update({
   path: '/cwicz/$exercise/prep',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CwiczExerciseLiveRoute = CwiczExerciseLiveRouteImport.update({
+  id: '/cwicz/$exercise/live',
+  path: '/cwicz/$exercise/live',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cwicz/': typeof CwiczIndexRoute
+  '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
   '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cwicz': typeof CwiczIndexRoute
+  '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
   '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cwicz/': typeof CwiczIndexRoute
+  '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
   '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cwicz/' | '/cwicz/$exercise/prep'
+  fullPaths: '/' | '/cwicz/' | '/cwicz/$exercise/live' | '/cwicz/$exercise/prep'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cwicz' | '/cwicz/$exercise/prep'
-  id: '__root__' | '/' | '/cwicz/' | '/cwicz/$exercise/prep'
+  to: '/' | '/cwicz' | '/cwicz/$exercise/live' | '/cwicz/$exercise/prep'
+  id:
+    | '__root__'
+    | '/'
+    | '/cwicz/'
+    | '/cwicz/$exercise/live'
+    | '/cwicz/$exercise/prep'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CwiczIndexRoute: typeof CwiczIndexRoute
+  CwiczExerciseLiveRoute: typeof CwiczExerciseLiveRoute
   CwiczExercisePrepRoute: typeof CwiczExercisePrepRoute
 }
 
@@ -82,12 +97,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CwiczExercisePrepRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cwicz/$exercise/live': {
+      id: '/cwicz/$exercise/live'
+      path: '/cwicz/$exercise/live'
+      fullPath: '/cwicz/$exercise/live'
+      preLoaderRoute: typeof CwiczExerciseLiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CwiczIndexRoute: CwiczIndexRoute,
+  CwiczExerciseLiveRoute: CwiczExerciseLiveRoute,
   CwiczExercisePrepRoute: CwiczExercisePrepRoute,
 }
 export const routeTree = rootRouteImport
