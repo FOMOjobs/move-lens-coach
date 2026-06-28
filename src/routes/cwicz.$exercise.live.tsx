@@ -31,18 +31,21 @@ function LivePage() {
   const analyzerRef = useRef<SquatAnalyzer>(new SquatAnalyzer());
   const startedAtRef = useRef<number>(Date.now());
 
-  const [facing, setFacing] = useState<"user" | "environment">("environment");
-  const [paused, setPaused] = useState(false);
+  // Faza sesji: podgląd (przed Startem) → trwa → pauza
+  const [phase, setPhase] = useState<"preview" | "running" | "paused">("preview");
+  const [facing, setFacing] = useState<"user" | "environment">("user"); // domyślnie przednia
   const [feedback, setFeedback] = useState<SquatFeedback | null>(null);
+  const [displayReps, setDisplayReps] = useState(0); // licznik utrzymywany też w pauzie
   const [simpleCount, setSimpleCount] = useState(0); // dla nie-przysiadów (na razie czas)
   const [elapsed, setElapsed] = useState(0);
   const [summary, setSummary] = useState<SquatSummary | null>(null);
 
-  // Tykanie czasu sesji
+  // Tykanie czasu sesji — tylko gdy trwa
   useEffect(() => {
+    if (phase !== "running") return;
     const id = setInterval(() => setElapsed(Math.floor((Date.now() - startedAtRef.current) / 1000)), 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [phase]);
 
   const onFrame = useCallback(
     (landmarks: any, ts: number, ctx: { videoWidth: number; videoHeight: number }) => {
@@ -74,6 +77,7 @@ function LivePage() {
       if (isSquat) {
         fb = analyzerRef.current.analyze(landmarks, ts);
         setFeedback(fb);
+        if (fb?.ready) setDisplayReps(fb.reps); // utrzymaj licznik (także w pauzie)
       } else {
         // Uproszczona "analiza" — tylko szkielet, brak liczenia
         setSimpleCount((c) => c);
@@ -127,9 +131,20 @@ function LivePage() {
 
   const { videoRef, status, error } = usePoseAnalysis({
     onFrame,
-    enabled: !paused && !summary,
+    enabled: !summary, // kamera + model aktywne przez cały ekran (oprócz podsumowania)
+    detecting: phase === "running", // detekcja dopiero po Starcie, wstrzymana w pauzie
     facingMode: facing,
   });
+
+  const start = () => {
+    analyzerRef.current.reset();
+    startedAtRef.current = Date.now();
+    setDisplayReps(0);
+    setSimpleCount(0);
+    setElapsed(0);
+    setFeedback(null);
+    setPhase("running");
+  };
 
   const stopAndSummarize = () => {
     if (isSquat) {
@@ -144,15 +159,17 @@ function LivePage() {
     startedAtRef.current = Date.now();
     setSummary(null);
     setFeedback(null);
+    setDisplayReps(0);
+    setSimpleCount(0);
     setElapsed(0);
-    setPaused(false);
+    setPhase("preview");
   };
 
   const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
   const ss = String(elapsed % 60).padStart(2, "0");
 
   const formScore = feedback?.formScore ?? 0;
-  const reps = isSquat ? feedback?.reps ?? 0 : simpleCount;
+  const reps = isSquat ? displayReps : simpleCount;
 
   return (
     <div className="fixed inset-0 z-50 bg-black text-white">
@@ -231,8 +248,22 @@ function LivePage() {
         Analiza lokalnie. Obraz nie jest wysyłany.
       </div>
 
-      {/* Coaching ustawienia — gdy sylwetka nie jest pewnie w kadrze */}
-      {isSquat && status === "ready" && !summary && feedback && !feedback.ready && (
+      {/* Podgląd przed startem — instrukcja ustawienia */}
+      {status === "ready" && !summary && phase === "preview" && (
+        <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-8 text-center">
+          <div className="mx-auto max-w-xs rounded-3xl bg-black/55 px-5 py-4 backdrop-blur">
+            <p className="text-base font-semibold">Ustaw się i naciśnij Start</p>
+            <p className="mt-1 text-sm text-white/80">
+              {isSquat
+                ? "Oprzyj telefon, stań bokiem 2–3 m tak, aby było widać całą sylwetkę."
+                : "Ustaw telefon tak, aby było widać całą sylwetkę."}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Coaching ustawienia — gdy sylwetka nie jest pewnie w kadrze (po starcie) */}
+      {isSquat && status === "ready" && !summary && phase === "running" && feedback && !feedback.ready && (
         <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-8 text-center">
           <div className="mx-auto max-w-xs rounded-3xl bg-black/55 px-5 py-4 backdrop-blur">
             <p className="text-base font-semibold">Ustaw się do analizy</p>
@@ -240,10 +271,19 @@ function LivePage() {
           </div>
         </div>
       )}
-      {isSquat && status === "ready" && !summary && !feedback && (
+      {isSquat && status === "ready" && !summary && phase === "running" && !feedback && (
         <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-8 text-center">
           <div className="mx-auto max-w-xs rounded-3xl bg-black/55 px-5 py-4 backdrop-blur">
             <p className="text-sm text-white/80">Nie wykrywam sylwetki — wejdź w kadr.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Etykieta pauzy */}
+      {!summary && phase === "paused" && (
+        <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-8 text-center">
+          <div className="mx-auto rounded-full bg-black/55 px-4 py-2 text-sm font-semibold backdrop-blur">
+            Pauza
           </div>
         </div>
       )}
@@ -260,26 +300,38 @@ function LivePage() {
 
       {/* Dolne sterowanie */}
       <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center gap-4 bg-gradient-to-t from-black/70 to-transparent p-5 pb-[max(env(safe-area-inset-bottom),1.25rem)]">
-        <button
-          onClick={() => setPaused((p) => !p)}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur"
-          aria-label={paused ? "Wznów" : "Pauza"}
-        >
-          {paused ? <Play className="h-6 w-6" /> : <Pause className="h-6 w-6" />}
-        </button>
-        <button
-          onClick={stopAndSummarize}
-          className="rounded-full bg-primary px-6 py-4 text-base font-semibold text-primary-foreground"
-        >
-          Zakończ serię
-        </button>
-        <button
-          onClick={restart}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur"
-          aria-label="Restart"
-        >
-          <RotateCcw className="h-6 w-6" />
-        </button>
+        {phase === "preview" ? (
+          <button
+            onClick={start}
+            disabled={status !== "ready"}
+            className="rounded-full bg-primary px-10 py-4 text-base font-semibold text-primary-foreground disabled:opacity-50"
+          >
+            Start
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={() => setPhase((p) => (p === "paused" ? "running" : "paused"))}
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur"
+              aria-label={phase === "paused" ? "Wznów" : "Pauza"}
+            >
+              {phase === "paused" ? <Play className="h-6 w-6" /> : <Pause className="h-6 w-6" />}
+            </button>
+            <button
+              onClick={stopAndSummarize}
+              className="rounded-full bg-primary px-6 py-4 text-base font-semibold text-primary-foreground"
+            >
+              Zakończ serię
+            </button>
+            <button
+              onClick={restart}
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur"
+              aria-label="Reset"
+            >
+              <RotateCcw className="h-6 w-6" />
+            </button>
+          </>
+        )}
       </div>
 
       {/* Modal podsumowania */}

@@ -30,11 +30,18 @@ export type PoseFrameCallback = (
 
 export interface UsePoseAnalysisOptions {
   onFrame: PoseFrameCallback;
+  /** Kamera + model aktywne (podgląd na żywo). */
   enabled: boolean;
+  /**
+   * Czy uruchamiać detekcję pozy każdej klatki. Gdy false — pokazujemy
+   * sam podgląd kamery (bez szkieletu), a do consumenta leci onFrame(null),
+   * więc canvas się czyści. Przełączanie tej flagi NIE restartuje kamery.
+   */
+  detecting: boolean;
   facingMode: "user" | "environment";
 }
 
-export function usePoseAnalysis({ onFrame, enabled, facingMode }: UsePoseAnalysisOptions) {
+export function usePoseAnalysis({ onFrame, enabled, detecting, facingMode }: UsePoseAnalysisOptions) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const landmarkerRef = useRef<any>(null);
@@ -42,6 +49,8 @@ export function usePoseAnalysis({ onFrame, enabled, facingMode }: UsePoseAnalysi
   const lastTsRef = useRef(0);
   const onFrameRef = useRef(onFrame);
   onFrameRef.current = onFrame;
+  const detectingRef = useRef(detecting);
+  detectingRef.current = detecting;
 
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
@@ -145,19 +154,20 @@ export function usePoseAnalysis({ onFrame, enabled, facingMode }: UsePoseAnalysi
           lastTsRef.current = safeTs;
 
           const lmr = landmarkerRef.current;
-          // Detekcję uruchamiamy dopiero, gdy model gotowy i są klatki wideo.
-          // Do tego czasu pokazujemy sam podgląd kamery (bez szkieletu).
-          if (lmr && v.readyState >= 2) {
+          const ctx = { videoWidth: v.videoWidth, videoHeight: v.videoHeight };
+          // Detekcję uruchamiamy tylko gdy włączona (po Starcie), model gotowy
+          // i są klatki wideo. W przeciwnym razie czyścimy szkielet (onFrame null),
+          // a sam podgląd kamery pozostaje widoczny.
+          if (detectingRef.current && lmr && v.readyState >= 2) {
             try {
               const result = lmr.detectForVideo(v, safeTs);
               const lm = result?.landmarks?.[0] ?? null;
-              onFrameRef.current(lm, safeTs, {
-                videoWidth: v.videoWidth,
-                videoHeight: v.videoHeight,
-              });
+              onFrameRef.current(lm, safeTs, ctx);
             } catch (e) {
               // pojedynczy błąd klatki nie powinien wywalić pętli
             }
+          } else {
+            onFrameRef.current(null, safeTs, ctx);
           }
           rafRef.current = requestAnimationFrame(loop);
         };
