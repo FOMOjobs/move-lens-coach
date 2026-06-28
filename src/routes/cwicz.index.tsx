@@ -41,7 +41,7 @@ const exercises: ExerciseCard[] = [
     name: "Deska (plank)",
     desc: "Statyczne wzmocnienie środka ciała.",
     attention: "Pomiar czasu · uproszczona analiza",
-    icon: Stretch,
+    icon: Minus,
   },
   {
     slug: "wykrok",
