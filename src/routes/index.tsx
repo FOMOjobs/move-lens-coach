@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Activity, Heart, HeartPulse, Dumbbell } from "lucide-react";
 import { Ring } from "@/components/Ring";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,8 +20,13 @@ function TodayPage() {
   return (
     <div className="px-5 pt-8">
       <header className="mb-6">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">{dateStr}</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Cześć 👋</h1>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">{dateStr}</p>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight">Cześć 👋</h1>
+          </div>
+          <ThemeToggle />
+        </div>
         <p className="mt-1 text-sm text-muted-foreground">
           Spokojny dzień. Twoje ciało jest gotowe na lekki trening techniki.
         </p>

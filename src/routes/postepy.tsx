@@ -72,15 +72,15 @@ function ProgressPage() {
           <AreaChart data={formData} margin={{ left: -20, right: 0, top: 8, bottom: 0 }}>
             <defs>
               <linearGradient id="formGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3FA98D" stopOpacity={0.45} />
-                <stop offset="100%" stopColor="#3FA98D" stopOpacity={0} />
+                <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.45} />
+                <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid stroke="#E4EDE9" vertical={false} />
-            <XAxis dataKey="d" stroke="#5A6B65" fontSize={11} tickLine={false} axisLine={false} />
-            <YAxis stroke="#5A6B65" fontSize={11} tickLine={false} axisLine={false} domain={[40, 100]} />
-            <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #E4EDE9", fontSize: 12 }} />
-            <Area type="monotone" dataKey="v" stroke="#1E7C64" strokeWidth={2.5} fill="url(#formGrad)" />
+            <CartesianGrid stroke="var(--hairline)" vertical={false} />
+            <XAxis dataKey="d" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+            <YAxis stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} domain={[40, 100]} />
+            <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--hairline)", background: "var(--card)", color: "var(--foreground)", fontSize: 12 }} />
+            <Area type="monotone" dataKey="v" stroke="var(--primary-deep)" strokeWidth={2.5} fill="url(#formGrad)" />
           </AreaChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -88,11 +88,11 @@ function ProgressPage() {
       <ChartCard title="Głębokość przysiadu" hint="kąt kolana w dolnej fazie (mniej = głębiej)">
         <ResponsiveContainer width="100%" height={160}>
           <LineChart data={depthData} margin={{ left: -20, right: 0, top: 8, bottom: 0 }}>
-            <CartesianGrid stroke="#E4EDE9" vertical={false} />
-            <XAxis dataKey="d" stroke="#5A6B65" fontSize={11} tickLine={false} axisLine={false} />
-            <YAxis stroke="#5A6B65" fontSize={11} tickLine={false} axisLine={false} reversed domain={[80, 120]} />
-            <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #E4EDE9", fontSize: 12 }} />
-            <Line type="monotone" dataKey="v" stroke="#3FA98D" strokeWidth={2.5} dot={{ r: 3, fill: "#1E7C64" }} />
+            <CartesianGrid stroke="var(--hairline)" vertical={false} />
+            <XAxis dataKey="d" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+            <YAxis stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} reversed domain={[80, 120]} />
+            <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--hairline)", background: "var(--card)", color: "var(--foreground)", fontSize: 12 }} />
+            <Line type="monotone" dataKey="v" stroke="var(--primary)" strokeWidth={2.5} dot={{ r: 3, fill: "var(--primary-deep)" }} />
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
@@ -100,11 +100,11 @@ function ProgressPage() {
       <ChartCard title="Powtórzenia w tygodniu" hint="dziennie">
         <ResponsiveContainer width="100%" height={140}>
           <LineChart data={repsData} margin={{ left: -20, right: 0, top: 8, bottom: 0 }}>
-            <CartesianGrid stroke="#E4EDE9" vertical={false} />
-            <XAxis dataKey="d" stroke="#5A6B65" fontSize={11} tickLine={false} axisLine={false} />
-            <YAxis stroke="#5A6B65" fontSize={11} tickLine={false} axisLine={false} />
-            <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #E4EDE9", fontSize: 12 }} />
-            <Line type="monotone" dataKey="v" stroke="#34B27B" strokeWidth={2.5} dot={{ r: 3, fill: "#34B27B" }} />
+            <CartesianGrid stroke="var(--hairline)" vertical={false} />
+            <XAxis dataKey="d" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+            <YAxis stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+            <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--hairline)", background: "var(--card)", color: "var(--foreground)", fontSize: 12 }} />
+            <Line type="monotone" dataKey="v" stroke="var(--good)" strokeWidth={2.5} dot={{ r: 3, fill: "var(--good)" }} />
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>

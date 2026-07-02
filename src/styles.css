@@ -91,6 +91,59 @@
   --sidebar-accent-foreground: oklch(0.32 0.04 165);
   --sidebar-border: oklch(0.92 0.012 165);
   --sidebar-ring: oklch(0.68 0.09 168);
+
+  color-scheme: light;
+}
+
+/*
+ * Dark mode — "klimatyczna" głęboka zieleń, nie odwrócona szarość.
+ * Tło prawie czarne z zielonym podtonem, karty jak ciemne szkło,
+ * mięta jaśniejsza (kontrast), akcenty stonowane. Ten sam język co light.
+ */
+.dark {
+  --background: oklch(0.16 0.014 170);      /* zieleń-czerń */
+  --foreground: oklch(0.93 0.012 165);      /* miętowa biel */
+  --card: oklch(0.215 0.016 168);           /* uniesiona powierzchnia */
+  --card-foreground: oklch(0.93 0.012 165);
+  --popover: oklch(0.215 0.016 168);
+  --popover-foreground: oklch(0.93 0.012 165);
+
+  --primary: oklch(0.74 0.10 168);          /* jaśniejsza mięta */
+  --primary-foreground: oklch(0.17 0.02 170);
+  --primary-deep: oklch(0.82 0.07 168);     /* w dark "deep" to jasny akcent */
+
+  --secondary: oklch(0.27 0.025 168);
+  --secondary-foreground: oklch(0.90 0.02 165);
+
+  --muted: oklch(0.24 0.016 168);
+  --muted-foreground: oklch(0.67 0.018 165);
+
+  --accent: oklch(0.27 0.025 168);
+  --accent-foreground: oklch(0.90 0.02 165);
+
+  --tint: oklch(0.275 0.03 168);
+  --good: oklch(0.75 0.13 158);
+  --warn: oklch(0.80 0.11 75);
+  --bad: oklch(0.70 0.13 30);
+
+  --destructive: oklch(0.70 0.13 30);
+  --destructive-foreground: oklch(0.16 0.014 170);
+
+  --border: oklch(0.29 0.014 168);
+  --input: oklch(0.29 0.014 168);
+  --ring: oklch(0.74 0.10 168);
+  --hairline: oklch(0.29 0.014 168);
+
+  --sidebar: oklch(0.215 0.016 168);
+  --sidebar-foreground: oklch(0.93 0.012 165);
+  --sidebar-primary: oklch(0.74 0.10 168);
+  --sidebar-primary-foreground: oklch(0.17 0.02 170);
+  --sidebar-accent: oklch(0.27 0.025 168);
+  --sidebar-accent-foreground: oklch(0.90 0.02 165);
+  --sidebar-border: oklch(0.29 0.014 168);
+  --sidebar-ring: oklch(0.74 0.10 168);
+
+  color-scheme: dark;
 }
 
 @layer base {
@@ -102,14 +155,48 @@
   }
   body {
     background-color: var(--color-background);
+    /* Klimat: bardzo delikatna poświata mięty u góry zamiast płaskiego tła */
+    background-image: radial-gradient(
+      120% 55% at 50% 0%,
+      color-mix(in oklch, var(--primary) 8%, transparent),
+      transparent 62%
+    );
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+  }
+  .dark body {
+    /* W nocy poświata odrobinę mocniejsza — głębia zamiast czerni */
+    background-image: radial-gradient(
+      120% 55% at 50% 0%,
+      color-mix(in oklch, var(--primary) 13%, transparent),
+      transparent 65%
+    );
+  }
+  a, button {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
 /* Druk "Podsumowania dla lekarza": na papierze tylko raport, pełna szerokość */
 @media print {
+  /* Papier zawsze jasny — nadpisujemy tokeny dark mode */
+  .dark {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.245 0.024 165);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.245 0.024 165);
+    --muted-foreground: oklch(0.52 0.018 165);
+    --hairline: oklch(0.92 0.012 165);
+    --tint: oklch(0.94 0.02 165);
+    --primary-deep: oklch(0.52 0.09 168);
+    --warn: oklch(0.78 0.11 75);
+  }
+  body {
+    background-image: none;
+  }
   body * {
     visibility: hidden;
   }

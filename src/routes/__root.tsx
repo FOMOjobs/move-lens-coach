@@ -107,10 +107,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+// Ustawia klasę .dark PRZED renderem (bez błysku jasnego tła przy starcie).
+// Preferencja użytkownika > ustawienie systemowe.
+const THEME_INIT = `(function(){try{var t=localStorage.getItem("movelens.theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pl">
+    <html lang="pl" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
         <HeadContent />
       </head>
       <body>
@@ -131,7 +136,8 @@ function AppFrame() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background pb-24">
+    // Przezroczysta ramka — tło (z poświatą) daje body
+    <div className="mx-auto flex min-h-screen w-full max-w-md flex-col pb-24">
       <main className="flex-1">
         <Outlet />
       </main>
