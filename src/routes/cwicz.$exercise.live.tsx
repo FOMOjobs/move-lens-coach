@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pause, Play, RotateCcw, SwitchCamera, X } from "lucide-react";
+import { Pause, Play, RotateCcw, SwitchCamera, Volume2, VolumeX, X } from "lucide-react";
 import { Ring } from "@/components/Ring";
 import { cn } from "@/lib/utils";
 import { usePoseAnalysis } from "@/lib/pose/usePoseAnalysis";
 import { SquatAnalyzer, type SquatFeedback, type SquatSummary } from "@/lib/pose/squatAnalyzer";
 import { POSE_CONNECTIONS } from "@/lib/pose/geometry";
+import { VoiceCoach } from "@/lib/pose/voiceCoach";
 
 export const Route = createFileRoute("/cwicz/$exercise/live")({
   head: () => ({
@@ -29,11 +30,16 @@ function LivePage() {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const analyzerRef = useRef<SquatAnalyzer>(new SquatAnalyzer());
+  const coachRef = useRef<VoiceCoach | null>(null);
+  if (coachRef.current === null && typeof window !== "undefined") {
+    coachRef.current = new VoiceCoach();
+  }
   const startedAtRef = useRef<number>(Date.now());
 
   // Faza sesji: podgląd (przed Startem) → trwa → pauza
   const [phase, setPhase] = useState<"preview" | "running" | "paused">("preview");
   const [facing, setFacing] = useState<"user" | "environment">("user"); // domyślnie przednia
+  const [voiceOn, setVoiceOn] = useState(true);
   const [feedback, setFeedback] = useState<SquatFeedback | null>(null);
   const [displayReps, setDisplayReps] = useState(0); // licznik utrzymywany też w pauzie
   const [simpleCount, setSimpleCount] = useState(0); // dla nie-przysiadów (na razie czas)
@@ -78,6 +84,7 @@ function LivePage() {
         fb = analyzerRef.current.analyze(landmarks, ts);
         setFeedback(fb);
         if (fb?.ready) setDisplayReps(fb.reps); // utrzymaj licznik (także w pauzie)
+        if (fb) coachRef.current?.onSquatFeedback(fb, ts); // głosowy trener
       } else {
         // Uproszczona "analiza" — tylko szkielet, brak liczenia
         setSimpleCount((c) => c);
@@ -138,17 +145,24 @@ function LivePage() {
 
   const start = () => {
     analyzerRef.current.reset();
+    coachRef.current?.reset();
+    coachRef.current?.unlock(); // iOS: odblokuj mowę w geście użytkownika
     startedAtRef.current = Date.now();
     setDisplayReps(0);
     setSimpleCount(0);
     setElapsed(0);
     setFeedback(null);
     setPhase("running");
+    if (isSquat) coachRef.current?.say("Zaczynamy. Pierwszy przysiad!");
   };
 
   const stopAndSummarize = () => {
     if (isSquat) {
-      setSummary(analyzerRef.current.summary());
+      const s = analyzerRef.current.summary();
+      setSummary(s);
+      coachRef.current?.say(
+        `Koniec serii. ${s.reps} powtórzeń, forma ${Math.round(s.avgFormScore)} na sto. ${s.topTip}`,
+      );
     } else {
       setSummary({ reps: simpleCount, avgDepthAngle: 0, avgFormScore: 0, topTip: "Brawo! Sesja zapisana.", symmetryDelta: 0 });
     }
@@ -156,6 +170,7 @@ function LivePage() {
 
   const restart = () => {
     analyzerRef.current.reset();
+    coachRef.current?.reset();
     startedAtRef.current = Date.now();
     setSummary(null);
     setFeedback(null);
@@ -164,6 +179,27 @@ function LivePage() {
     setElapsed(0);
     setPhase("preview");
   };
+
+  const toggleVoice = () => {
+    setVoiceOn((v) => {
+      coachRef.current?.setEnabled(!v);
+      return !v;
+    });
+  };
+
+  const togglePause = () => {
+    setPhase((p) => {
+      const next = p === "paused" ? "running" : "paused";
+      if (next === "paused") coachRef.current?.say("Pauza.");
+      else coachRef.current?.say("Wznawiamy.");
+      return next;
+    });
+  };
+
+  // Ucisz mowę przy wyjściu z ekranu
+  useEffect(() => {
+    return () => coachRef.current?.reset();
+  }, []);
 
   const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
   const ss = String(elapsed % 60).padStart(2, "0");
@@ -200,13 +236,25 @@ function LivePage() {
           <div className="text-5xl font-semibold tabular-nums leading-tight">{reps}</div>
           <div className="text-[10px] uppercase tracking-wider text-white/60">powtórzeń</div>
         </div>
-        <button
-          onClick={() => setFacing((f) => (f === "user" ? "environment" : "user"))}
-          className="rounded-full bg-black/40 p-2 backdrop-blur"
-          aria-label="Przełącz kamerę"
-        >
-          <SwitchCamera className="h-5 w-5" />
-        </button>
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => setFacing((f) => (f === "user" ? "environment" : "user"))}
+            className="rounded-full bg-black/40 p-2 backdrop-blur"
+            aria-label="Przełącz kamerę"
+          >
+            <SwitchCamera className="h-5 w-5" />
+          </button>
+          <button
+            onClick={toggleVoice}
+            className={cn(
+              "rounded-full p-2 backdrop-blur",
+              voiceOn ? "bg-primary/80" : "bg-black/40",
+            )}
+            aria-label={voiceOn ? "Wyłącz głos trenera" : "Włącz głos trenera"}
+          >
+            {voiceOn ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Pierścień Form Score (prawy bok) */}
@@ -311,7 +359,7 @@ function LivePage() {
         ) : (
           <>
             <button
-              onClick={() => setPhase((p) => (p === "paused" ? "running" : "paused"))}
+              onClick={togglePause}
               className="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 backdrop-blur"
               aria-label={phase === "paused" ? "Wznów" : "Pauza"}
             >
