@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Activity, Moon, HeartPulse, Dumbbell } from "lucide-react";
+import { ArrowRight, Activity, Heart, HeartPulse, Dumbbell } from "lucide-react";
 import { Ring } from "@/components/Ring";
 
 export const Route = createFileRoute("/")({
@@ -33,13 +33,13 @@ function TodayPage() {
           <div className="flex-1">
             <h2 className="text-base font-semibold">Dobra regeneracja</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Tętno spoczynkowe 58 bpm, sen 7 h 12 min. Możesz potrenować z umiarkowaną intensywnością.
+              Tętno spoczynkowe 58 bpm, ciśnienie w normie. Możesz potrenować z umiarkowaną intensywnością.
             </p>
           </div>
         </div>
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           <Metric icon={HeartPulse} label="HR spocz." value="58" unit="bpm" />
-          <Metric icon={Moon} label="Sen" value="7:12" unit="h" />
+          <Metric icon={Heart} label="Ciśnienie" value="118/76" unit="" />
           <Metric icon={Activity} label="Kroki" value="6 240" unit="" />
         </div>
       </section>

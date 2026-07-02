@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Apple, Activity, FileText, Upload, Heart, Moon, Footprints, Stethoscope, FlaskConical, CheckCircle2, ArrowRight, Printer } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Apple, Activity, FileText, Upload, Heart, Footprints, Stethoscope, FlaskConical, CheckCircle2, ArrowRight, Printer, Dumbbell } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { buildMovementSummary } from "@/lib/health/doctorSummary";
+import { buildMovementSummary, type MovementSummary } from "@/lib/health/doctorSummary";
+import { bpWeekSummary, type BpSummary } from "@/lib/health/bloodPressure";
+import { BloodPressureCard } from "@/components/BloodPressureCard";
 
 export const Route = createFileRoute("/dane")({
   head: () => ({
@@ -23,6 +25,9 @@ function DataPage() {
     labs: true,
   });
   const [doctorOpen, setDoctorOpen] = useState(false);
+  // Realne pomiary MoveLens — ładowane po montażu (localStorage, klient)
+  const [movement, setMovement] = useState<MovementSummary | null>(null);
+  useEffect(() => setMovement(buildMovementSummary()), []);
 
   const toggle = (k: SourceKey) => setImported((s) => ({ ...s, [k]: !s[k] }));
 
@@ -62,12 +67,22 @@ function DataPage() {
         />
       </section>
 
+      {/* Dzienniczek ciśnienia (dane realne, lokalne) */}
+      <BloodPressureCard />
+
       {/* Najważniejsze wskaźniki */}
       <section className="mt-6 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Najważniejsze wskaźniki</h2>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <Indicator icon={Heart} label="Tętno spoczynkowe" value="58" unit="bpm" status="good" />
-          <Indicator icon={Moon} label="Sen (7 dni)" value="7:08" unit="h" status="good" />
+          <Indicator
+            icon={Dumbbell}
+            label="Form Score (ost. sesje)"
+            value={movement?.avgFormRecent != null ? String(movement.avgFormRecent) : "—"}
+            unit={movement?.avgFormRecent != null ? "/ 100" : ""}
+            status="good"
+            hint={movement?.avgFormRecent == null ? "wykonaj trening" : undefined}
+          />
           <Indicator icon={Footprints} label="Aktywność" value="6 240" unit="kroków" status="warn" hint="poniżej celu" />
           <Indicator icon={FlaskConical} label="Witamina D" value="22" unit="ng/ml" status="warn" hint="lekko obniżona" />
         </div>
@@ -86,8 +101,8 @@ function DataPage() {
             body="Twój ostatni wynik (22 ng/ml) sugeruje konsultację z lekarzem. To częsty problem zimą."
           />
           <Insight
-            title="Sen i jakość treningu idą w parze"
-            body="W dni z >7 h snu Twój Form Score jest średnio o 9 pkt wyższy."
+            title="Głębokość przysiadu rośnie"
+            body="Twój zakres ruchu poprawia się z tygodnia na tydzień — dobra praca nad mobilnością."
           />
         </ul>
       </section>
@@ -98,7 +113,7 @@ function DataPage() {
         <ol className="mt-4 space-y-4 border-l border-hairline pl-5">
           <Timeline icon={Activity} date="Dziś" title="6 240 kroków" body="Niska aktywność — krótszy spacer." color="warn" />
           <Timeline icon={Heart} date="Wczoraj" title="Trening: przysiady" body="30 powtórzeń, Form Score 83." color="good" />
-          <Timeline icon={Moon} date="Noc 26/27" title="Sen 7 h 38 min" body="Głęboki sen 1 h 22 min." color="good" />
+          <Timeline icon={Heart} date="Wczoraj rano" title="Ciśnienie 118/76" body="W normie domowej. Dzienniczek uzupełniony." color="good" />
           <Timeline icon={FlaskConical} date="3 dni temu" title="Wyniki badań" body="Morfologia w normie. Witamina D obniżona." color="warn" />
           <Timeline icon={Stethoscope} date="2 tygodnie temu" title="Wizyta — fizjoterapia" body="Plan mobilności bioder." color="good" />
         </ol>
@@ -230,8 +245,9 @@ function Timeline({ icon: Icon, date, title, body, color }: { icon: any; date: s
 }
 
 function DoctorSheet({ onClose }: { onClose: () => void }) {
-  // Realne dane ruchu zebrane przez MoveLens (localStorage, tylko klient)
+  // Realne dane zebrane przez MoveLens (localStorage; arkusz montuje się tylko na kliencie)
   const movement = useMemo(() => buildMovementSummary(), []);
+  const bp: BpSummary = useMemo(() => bpWeekSummary(), []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-black/50 backdrop-blur-sm sm:items-center sm:justify-center">
@@ -275,12 +291,28 @@ function DoctorSheet({ onClose }: { onClose: () => void }) {
           )}
         </Section>
 
+        {/* Dzienniczek ciśnienia — realne wpisy użytkownika (protokół HBPM) */}
+        <Section title="Dzienniczek ciśnienia — pomiar domowy (7 dni)">
+          {bp.filled > 0 ? (
+            <>
+              {bp.morningAvg && (
+                <Row k={`Rano (śr. z ${bp.morningAvg.n})`} v={`${bp.morningAvg.sys}/${bp.morningAvg.dia} mmHg`} />
+              )}
+              {bp.eveningAvg && (
+                <Row k={`Wieczorem (śr. z ${bp.eveningAvg.n})`} v={`${bp.eveningAvg.sys}/${bp.eveningAvg.dia} mmHg`} />
+              )}
+              <Row k="Kompletność zapisu" v={`${bp.filled} z 14 pomiarów`} />
+              {bp.elevated && <Row k="Uwaga" v="śr. ≥ 135/85 (norma domowa) ⚠" />}
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">Brak pomiarów — dzienniczek w zakładce „Dane".</p>
+          )}
+        </Section>
+
         {/* Wskaźniki ogólne — dane przykładowe do czasu importu Apple Health */}
         <Section title="Wskaźniki podstawowe (import)">
           <Row k="Tętno spoczynkowe (śr. 30 dni)" v="58 bpm" />
           <Row k="HRV (śr. 30 dni)" v="64 ms" />
-          <Row k="Ciśnienie (ost. pomiar)" v="118/76 mmHg" />
-          <Row k="Sen (śr.)" v="7 h 08 min" />
         </Section>
 
         <Section title="Wyniki badań (ost. 3 mies.)">

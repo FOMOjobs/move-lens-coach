@@ -3,7 +3,7 @@
  * zebranych przez MoveLens (sesje treningowe + testy kliniczne ruchu).
  *
  * Zwraca gotowe, otypowane wartości — UI tylko renderuje. Wskaźniki
- * ogólnozdrowotne (tętno, sen, badania) pozostają na razie przykładowe,
+ * ogólnozdrowotne (tętno, badania) pozostają na razie przykładowe,
  * dopóki nie podłączymy importu Apple Health.
  */
 
