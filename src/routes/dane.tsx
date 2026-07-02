@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Apple, Activity, FileText, Upload, Heart, Moon, Footprints, Stethoscope, FlaskConical, CheckCircle2, ArrowRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Apple, Activity, FileText, Upload, Heart, Moon, Footprints, Stethoscope, FlaskConical, CheckCircle2, ArrowRight, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { buildMovementSummary } from "@/lib/health/doctorSummary";
 
 export const Route = createFileRoute("/dane")({
   head: () => ({
@@ -229,20 +230,53 @@ function Timeline({ icon: Icon, date, title, body, color }: { icon: any; date: s
 }
 
 function DoctorSheet({ onClose }: { onClose: () => void }) {
+  // Realne dane ruchu zebrane przez MoveLens (localStorage, tylko klient)
+  const movement = useMemo(() => buildMovementSummary(), []);
+
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-black/50 backdrop-blur-sm sm:items-center sm:justify-center">
-      <div className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-card p-6 sm:rounded-3xl">
-        <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-hairline sm:hidden" />
+      <div id="doctor-print" className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-card p-6 sm:rounded-3xl">
+        <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-hairline print:hidden sm:hidden" />
         <div className="flex items-start justify-between">
           <div>
             <p className="text-xs uppercase tracking-wider text-muted-foreground">Podsumowanie dla lekarza</p>
             <h2 className="text-xl font-semibold">Jan Kowalski · 34 lata</h2>
-            <p className="text-xs text-muted-foreground">Wygenerowano {new Date().toLocaleDateString("pl-PL")}</p>
+            <p className="text-xs text-muted-foreground">Wygenerowano {new Date().toLocaleDateString("pl-PL")} · MoveLens</p>
           </div>
-          <button onClick={onClose} className="rounded-full bg-tint px-3 py-1 text-xs">Zamknij</button>
+          <button onClick={onClose} className="rounded-full bg-tint px-3 py-1 text-xs print:hidden">Zamknij</button>
         </div>
 
-        <Section title="Wskaźniki podstawowe">
+        {/* Realne pomiary MoveLens */}
+        <Section title="Jakość ruchu — pomiar MoveLens (kamera)">
+          {movement.sessionCount > 0 ? (
+            <>
+              <Row k="Sesje przysiadu" v={`${movement.sessionCount} (łącznie ${movement.totalReps} powt.)`} />
+              {movement.avgFormRecent != null && <Row k="Form Score (ost. sesje)" v={`${movement.avgFormRecent} / 100`} />}
+              {movement.formTrend != null && (
+                <Row k="Trend jakości" v={`${movement.formTrend > 0 ? "+" : ""}${movement.formTrend} pkt`} />
+              )}
+              {movement.avgDepthRecent != null && <Row k="Głębokość (kąt kolana w dole)" v={`${movement.avgDepthRecent}°`} />}
+              {movement.symmetryAvg != null && <Row k="Asymetria kolan (śr.)" v={`${movement.symmetryAvg}°`} />}
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">Brak zapisanych sesji — wykonaj trening w zakładce „Ćwicz".</p>
+          )}
+        </Section>
+
+        <Section title="Testy kliniczne ruchu">
+          {movement.tests.length > 0 ? (
+            movement.tests.map((t) => (
+              <Row key={t.kind} k={`${t.label} (${t.dateLabel})`} v={`${t.valueLabel} · ${t.bandLabel}`} />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Brak wyników — wykonaj test wstawania z krzesła lub test równowagi w zakładce „Ćwicz".
+            </p>
+          )}
+        </Section>
+
+        {/* Wskaźniki ogólne — dane przykładowe do czasu importu Apple Health */}
+        <Section title="Wskaźniki podstawowe (import)">
           <Row k="Tętno spoczynkowe (śr. 30 dni)" v="58 bpm" />
           <Row k="HRV (śr. 30 dni)" v="64 ms" />
           <Row k="Ciśnienie (ost. pomiar)" v="118/76 mmHg" />
@@ -256,24 +290,35 @@ function DoctorSheet({ onClose }: { onClose: () => void }) {
           <Row k="TSH" v="2,1 µIU/ml" />
         </Section>
 
-        <Section title="Aktywność i trening">
-          <Row k="Średnio kroków/dzień" v="7 820" />
-          <Row k="Treningi (30 dni)" v="14 sesji" />
-          <Row k="Średni Form Score" v="79 / 100" />
-        </Section>
-
         <Section title="Obserwacje">
-          <p className="text-sm text-muted-foreground">
-            Wzrost jakości wykonywania przysiadu (+20 pkt w 6 tyg.). Stabilna regeneracja. Sugerowana konsultacja w sprawie witaminy D.
+          {movement.observations.length > 0 ? (
+            <ul className="list-disc space-y-1 pl-4 text-sm text-muted-foreground">
+              {movement.observations.map((o, i) => (
+                <li key={i}>{o}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">Za mało danych na obserwacje — wykonaj trening lub test.</p>
+          )}
+          <p className="mt-2 text-xs text-muted-foreground">
+            Pomiary z kamery wykonano lokalnie na urządzeniu użytkownika. Materiał informacyjny — nie stanowi diagnozy.
           </p>
         </Section>
 
-        <button
-          onClick={onClose}
-          className="mt-5 w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-deep"
-        >
-          Gotowe
-        </button>
+        <div className="mt-5 flex gap-3 print:hidden">
+          <button
+            onClick={() => window.print()}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-hairline px-4 py-3 text-sm font-medium"
+          >
+            <Printer className="h-4 w-4" /> Drukuj / PDF
+          </button>
+          <button
+            onClick={onClose}
+            className="flex-1 rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-deep"
+          >
+            Gotowe
+          </button>
+        </div>
       </div>
     </div>
   );

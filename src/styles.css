@@ -107,3 +107,23 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+/* Druk "Podsumowania dla lekarza": na papierze tylko raport, pełna szerokość */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #doctor-print,
+  #doctor-print * {
+    visibility: visible;
+  }
+  #doctor-print {
+    position: absolute;
+    inset: 0;
+    max-height: none;
+    overflow: visible;
+    max-width: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
