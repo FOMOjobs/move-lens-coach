@@ -13,12 +13,42 @@ const NAMES: Record<string, string> = {
   pompka: "Pompka",
   deska: "Deska (plank)",
   wykrok: "Wykrok",
+  "test-wstawania": "Test wstawania z krzesła",
+  "test-rownowagi": "Test równowagi",
+};
+
+interface PrepStep {
+  title: string;
+  body: string;
+}
+
+const DEFAULT_STEPS: PrepStep[] = [
+  { title: "Oprzyj telefon", body: "Postaw go pionowo lub poziomo o stabilny przedmiot — tak, żeby się nie ruszał." },
+  { title: "Stań bokiem do kamery", body: "Sylwetka z boku ujawnia najwięcej o technice — szczególnie w przysiadzie." },
+  { title: "Odsuń się na 2–3 m", body: "Cała sylwetka od głowy do stóp powinna być widoczna w kadrze." },
+  { title: "Dobre światło", body: "Najlepiej dzienne, bez ostrego kontrastu za plecami." },
+];
+
+const STEPS: Record<string, PrepStep[]> = {
+  "test-wstawania": [
+    { title: "Przygotuj krzesło", body: "Stabilne, bez podłokietników, oparte o ścianę — bokiem do kamery." },
+    { title: "Oprzyj telefon 2–3 m od krzesła", body: "W kadrze ma być cała sylwetka podczas siedzenia i stania." },
+    { title: "Usiądź, ręce skrzyżuj na klatce", body: "Tak wygląda standardowy protokół testu — ręce nie pomagają." },
+    { title: "Masz 30 sekund", body: "Wstawaj do pełnego wyprostu i siadaj — jak najwięcej razy. Aplikacja liczy i mierzy czas." },
+  ],
+  "test-rownowagi": [
+    { title: "Oprzyj telefon", body: "Stabilnie, najlepiej na wysokości bioder." },
+    { title: "Stań PRZODEM do kamery", body: "Obie nogi w całości w kadrze — to ważne dla pomiaru." },
+    { title: "Unieś jedną stopę", body: "Nie opieraj jej o drugą nogę. Czas rusza automatycznie po uniesieniu." },
+    { title: "Stój jak najdłużej", body: "Pomiar kończy się, gdy stopa dotknie podłogi (maks. 30 s)." },
+  ],
 };
 
 function PrepPage() {
   const { exercise } = Route.useParams();
   const navigate = useNavigate();
   const name = NAMES[exercise] ?? "Ćwiczenie";
+  const steps = STEPS[exercise] ?? DEFAULT_STEPS;
 
   return (
     <div className="px-5 pt-6">
@@ -30,10 +60,9 @@ function PrepPage() {
       <p className="mt-1 text-sm text-muted-foreground">Przygotuj scenę — to zajmie chwilę.</p>
 
       <ol className="mt-6 space-y-3">
-        <Step n={1} title="Oprzyj telefon" body="Postaw go pionowo lub poziomo o stabilny przedmiot — tak, żeby się nie ruszał." />
-        <Step n={2} title="Stań bokiem do kamery" body="Sylwetka z boku ujawnia najwięcej o technice — szczególnie w przysiadzie." />
-        <Step n={3} title="Odsuń się na 2–3 m" body="Cała sylwetka od głowy do stóp powinna być widoczna w kadrze." />
-        <Step n={4} title="Dobre światło" body="Najlepiej dzienne, bez ostrego kontrastu za plecami." />
+        {steps.map((s, i) => (
+          <Step key={i} n={i + 1} title={s.title} body={s.body} />
+        ))}
       </ol>
 
       <div className="mt-6 flex items-start gap-3 rounded-2xl bg-tint/70 p-4 text-sm">

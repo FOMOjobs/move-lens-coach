@@ -105,6 +105,11 @@ export class VoiceCoach {
     this.speak(text, { interrupt });
   }
 
+  /** Podpowiedź ustawienia z cooldownem (dla testów i innych ekranów). */
+  hint(text: string, nowMs: number) {
+    this.cue("coach", text, COACH_COOLDOWN_MS, nowMs);
+  }
+
   /** Główne wejście dla przysiadu — wołane z pętli klatek. */
   onSquatFeedback(fb: SquatFeedback, nowMs: number) {
     if (!this.enabled || !this.supported()) return;

@@ -7,12 +7,14 @@ import { usePoseAnalysis } from "@/lib/pose/usePoseAnalysis";
 import { SquatAnalyzer, type SquatFeedback, type SquatSummary } from "@/lib/pose/squatAnalyzer";
 import { POSE_CONNECTIONS } from "@/lib/pose/geometry";
 import { VoiceCoach } from "@/lib/pose/voiceCoach";
+import { TestLive } from "@/components/TestLive";
+import { saveSquatSession } from "@/lib/health/results";
 
 export const Route = createFileRoute("/cwicz/$exercise/live")({
   head: () => ({
     meta: [{ title: "Trening na żywo — MoveLens" }],
   }),
-  component: LivePage,
+  component: LiveRouter,
 });
 
 const NAMES: Record<string, string> = {
@@ -21,6 +23,14 @@ const NAMES: Record<string, string> = {
   deska: "Deska",
   wykrok: "Wykrok",
 };
+
+/** Testy kliniczne mają własny ekran; ćwiczenia — LivePage. */
+function LiveRouter() {
+  const { exercise } = Route.useParams();
+  if (exercise === "test-wstawania") return <TestLive kind="sit-to-stand" />;
+  if (exercise === "test-rownowagi") return <TestLive kind="balance" />;
+  return <LivePage />;
+}
 
 function LivePage() {
   const { exercise } = Route.useParams();
@@ -160,6 +170,15 @@ function LivePage() {
     if (isSquat) {
       const s = analyzerRef.current.summary();
       setSummary(s);
+      if (s.reps > 0) {
+        saveSquatSession({
+          reps: s.reps,
+          avgDepthAngle: s.avgDepthAngle,
+          avgFormScore: s.avgFormScore,
+          symmetryDelta: s.symmetryDelta,
+          topTip: s.topTip,
+        });
+      }
       coachRef.current?.say(
         `Koniec serii. ${s.reps} powtórzeń, forma ${Math.round(s.avgFormScore)} na sto. ${s.topTip}`,
       );
