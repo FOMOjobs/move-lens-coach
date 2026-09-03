@@ -10,8 +10,12 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 // HTTPS tylko lokalnie do testów na telefonie (kamera wymaga secure context).
 // Włącza się WYŁĄCZNIE, gdy istnieją lokalne certy w ./certs (gitignore),
 // więc na Lovable/produkcji zachowanie pozostaje bez zmian.
+// MOVELENS_HTTP=1 wymusza zwykły HTTP (wygodne na kompie: http://localhost
+// to i tak secure context, więc kamera działa bez ostrzeżeń o certyfikacie).
 const httpsCfg =
-  fs.existsSync("./certs/key.pem") && fs.existsSync("./certs/cert.pem")
+  process.env.MOVELENS_HTTP !== "1" &&
+  fs.existsSync("./certs/key.pem") &&
+  fs.existsSync("./certs/cert.pem")
     ? {
         key: fs.readFileSync("./certs/key.pem"),
         cert: fs.readFileSync("./certs/cert.pem"),
