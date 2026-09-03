@@ -7,6 +7,8 @@ export const getRouter = () => {
 
   const router = createRouter({
     routeTree,
+    // Na GitHub Pages aplikacja stoi w podkatalogu; lokalnie BASE_URL to "/".
+    basepath: import.meta.env.BASE_URL,
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,

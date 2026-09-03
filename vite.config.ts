@@ -7,12 +7,19 @@
 import fs from "node:fs";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+// Build pod GitHub Pages: DEPLOY_TARGET=gh-pages npm run build
+// Projekt jest hostowany w podkatalogu /move-lens-coach/, wiec potrzebny jest base,
+// a caly ruch musi isc klientem (SPA) — Pages nie uruchomi serwera SSR.
+const ghPages = process.env.DEPLOY_TARGET === "gh-pages";
+const base = ghPages ? "/move-lens-coach/" : "/";
+
 // HTTPS tylko lokalnie do testów na telefonie (kamera wymaga secure context).
 // Włącza się WYŁĄCZNIE, gdy istnieją lokalne certy w ./certs (gitignore),
 // więc na Lovable/produkcji zachowanie pozostaje bez zmian.
 // MOVELENS_HTTP=1 wymusza zwykły HTTP (wygodne na kompie: http://localhost
 // to i tak secure context, więc kamera działa bez ostrzeżeń o certyfikacie).
 const httpsCfg =
+  !ghPages &&
   process.env.MOVELENS_HTTP !== "1" &&
   fs.existsSync("./certs/key.pem") &&
   fs.existsSync("./certs/cert.pem")
@@ -27,6 +34,13 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    ...(ghPages ? { spa: { enabled: true } } : {}),
   },
-  ...(httpsCfg ? { vite: { server: { https: httpsCfg } } } : {}),
+  // Pages to zwykly hosting plikow — nitro (preset cloudflare) tylko przeszkadza,
+  // a jego katalog .output rozjezdza sie z prerenderem, ktory szuka dist/server.
+  ...(ghPages ? { nitro: false as const } : {}),
+  vite: {
+    base,
+    ...(httpsCfg ? { server: { https: httpsCfg } } : {}),
+  },
 });
