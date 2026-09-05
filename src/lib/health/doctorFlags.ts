@@ -126,8 +126,10 @@ export function buildDoctorFlags(pkg: ConsultPackage): DoctorFlag[] {
   if (pkg.bp.summary.elevated) {
     const ev: string[] = [];
     const s = pkg.bp.summary;
-    if (s.morningAvg) ev.push(`Średnia poranna: ${s.morningAvg.sys}/${s.morningAvg.dia} (n=${s.morningAvg.n})`);
-    if (s.eveningAvg) ev.push(`Średnia wieczorna: ${s.eveningAvg.sys}/${s.eveningAvg.dia} (n=${s.eveningAvg.n})`);
+    if (s.morningAvg)
+      ev.push(`Średnia poranna: ${s.morningAvg.sys}/${s.morningAvg.dia} (n=${s.morningAvg.n})`);
+    if (s.eveningAvg)
+      ev.push(`Średnia wieczorna: ${s.eveningAvg.sys}/${s.eveningAvg.dia} (n=${s.eveningAvg.n})`);
     ev.push(`Wypełnione pomiary w tygodniu: ${s.filled}/14`);
     ev.push("Próg domowy uznawany za podwyższony: ≥135/85");
     flags.push({

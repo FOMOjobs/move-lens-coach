@@ -17,7 +17,14 @@
 
 import { buildMovementSummary, type MovementSummary } from "./doctorSummary";
 import { bpWeek, bpWeekSummary, type BpSummary, type BpWeekDay } from "./bloodPressure";
-import { listLabPanels, labTrend, toFhirBundle, trackedCodes, type LabPanel, type LabTrendPoint } from "./labResults";
+import {
+  listLabPanels,
+  labTrend,
+  toFhirBundle,
+  trackedCodes,
+  type LabPanel,
+  type LabTrendPoint,
+} from "./labResults";
 import { decryptJson, encryptJson, fingerprint, generatePin, generateSecret } from "./crypto";
 
 export const PACKAGE_VERSION = 1;

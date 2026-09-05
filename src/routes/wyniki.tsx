@@ -50,7 +50,9 @@ const STATUS_STYLE: Record<RangeStatus, string> = {
 
 function LabsPage() {
   const [panels, setPanels] = useState<LabPanel[]>([]);
-  const [draft, setDraft] = useState<{ day: string; lab: string; values: ParsedLab[] } | null>(null);
+  const [draft, setDraft] = useState<{ day: string; lab: string; values: ParsedLab[] } | null>(
+    null,
+  );
   const [ocrBusy, setOcrBusy] = useState<string | null>(null);
   const [ocrError, setOcrError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -112,7 +114,10 @@ function LabsPage() {
   return (
     <div className="px-5 pt-8">
       <header className="mb-5">
-        <Link to="/dane" className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-primary">
+        <Link
+          to="/dane"
+          className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-primary"
+        >
           <ArrowLeft className="h-4 w-4" /> Dane
         </Link>
         <h1 className="text-3xl font-semibold tracking-tight">Wyniki badań</h1>
@@ -125,8 +130,9 @@ function LabsPage() {
         <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary-deep" />
         <p className="text-sm text-muted-foreground">
           MoveLens pokazuje wyłącznie to, co jest na kartce z laboratorium: wartość i zakres
-          referencyjny. <span className="font-medium text-foreground">Nie interpretuje wyników</span> —
-          od tego jest lekarz.
+          referencyjny.{" "}
+          <span className="font-medium text-foreground">Nie interpretuje wyników</span> — od tego
+          jest lekarz.
         </p>
       </div>
 
@@ -246,10 +252,7 @@ function PanelCard({ panel, onDelete }: { panel: LabPanel; onDelete: () => void 
         </button>
       </div>
 
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="mt-3 text-sm font-medium text-primary"
-      >
+      <button onClick={() => setOpen((o) => !o)} className="mt-3 text-sm font-medium text-primary">
         {open ? "Zwiń" : "Pokaż wyniki"}
       </button>
 
@@ -284,7 +287,8 @@ function ValueRow({ value }: { value: LabValue }) {
       </div>
       <div className="shrink-0 text-right">
         <p className="text-sm font-semibold tabular-nums">
-          {value.value} <span className="text-xs font-normal text-muted-foreground">{value.unit}</span>
+          {value.value}{" "}
+          <span className="text-xs font-normal text-muted-foreground">{value.unit}</span>
         </p>
         <span
           className={cn(
@@ -349,7 +353,10 @@ function ReviewDraft({
   return (
     <div className="px-5 pt-8">
       <header className="mb-5">
-        <button onClick={onCancel} className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-primary">
+        <button
+          onClick={onCancel}
+          className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-primary"
+        >
           <ArrowLeft className="h-4 w-4" /> Anuluj
         </button>
         <h1 className="text-3xl font-semibold tracking-tight">Sprawdź i popraw</h1>
@@ -386,7 +393,10 @@ function ReviewDraft({
 
       <ul className="space-y-3">
         {draft.values.map((v, i) => (
-          <li key={`${v.code}-${i}`} className="rounded-3xl border border-hairline bg-card p-4 shadow-sm">
+          <li
+            key={`${v.code}-${i}`}
+            className="rounded-3xl border border-hairline bg-card p-4 shadow-sm"
+          >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <p className="font-medium">{v.name}</p>
@@ -396,7 +406,11 @@ function ReviewDraft({
                   </p>
                 )}
               </div>
-              <button onClick={() => remove(i)} aria-label="Usuń" className="p-1 text-muted-foreground">
+              <button
+                onClick={() => remove(i)}
+                aria-label="Usuń"
+                className="p-1 text-muted-foreground"
+              >
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -425,7 +439,10 @@ function ReviewDraft({
                   inputMode="decimal"
                   value={v.refLow ?? ""}
                   onChange={(e) =>
-                    patch(i, { refLow: e.target.value === "" ? null : Number(e.target.value), refSource: "sheet" })
+                    patch(i, {
+                      refLow: e.target.value === "" ? null : Number(e.target.value),
+                      refSource: "sheet",
+                    })
                   }
                   className="w-full rounded-xl border border-hairline bg-background px-2 py-2 text-sm tabular-nums"
                 />
@@ -440,7 +457,10 @@ function ReviewDraft({
                   inputMode="decimal"
                   value={v.refHigh ?? ""}
                   onChange={(e) =>
-                    patch(i, { refHigh: e.target.value === "" ? null : Number(e.target.value), refSource: "sheet" })
+                    patch(i, {
+                      refHigh: e.target.value === "" ? null : Number(e.target.value),
+                      refSource: "sheet",
+                    })
                   }
                   className="w-full rounded-xl border border-hairline bg-background px-2 py-2 text-sm tabular-nums"
                 />

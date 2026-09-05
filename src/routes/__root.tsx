@@ -87,7 +87,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "MoveLens analizuje technikę Twoich ćwiczeń w czasie rzeczywistym i scala dane o zdrowiu w jedno miejsce.",
       },
       { property: "og:title", content: "MoveLens" },
-      { property: "og:description", content: "Osobisty trener techniki ruchu i centrum danych o zdrowiu." },
+      {
+        property: "og:description",
+        content: "Osobisty trener techniki ruchu i centrum danych o zdrowiu.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

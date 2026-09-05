@@ -7,7 +7,10 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Dziś — MoveLens" },
-      { name: "description", content: "Twój dzisiejszy przegląd: gotowość, sugerowana sesja i wnioski z danych." },
+      {
+        name: "description",
+        content: "Twój dzisiejszy przegląd: gotowość, sugerowana sesja i wnioski z danych.",
+      },
     ],
   }),
   component: TodayPage,
@@ -15,7 +18,11 @@ export const Route = createFileRoute("/")({
 
 function TodayPage() {
   const now = new Date();
-  const dateStr = now.toLocaleDateString("pl-PL", { weekday: "long", day: "numeric", month: "long" });
+  const dateStr = now.toLocaleDateString("pl-PL", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
 
   return (
     <div className="px-5 pt-8">
@@ -39,7 +46,8 @@ function TodayPage() {
           <div className="flex-1">
             <h2 className="text-base font-semibold">Dobra regeneracja</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Tętno spoczynkowe 58 bpm, ciśnienie w normie. Możesz potrenować z umiarkowaną intensywnością.
+              Tętno spoczynkowe 58 bpm, ciśnienie w normie. Możesz potrenować z umiarkowaną
+              intensywnością.
             </p>
           </div>
         </div>
@@ -56,7 +64,9 @@ function TodayPage() {
         <div className="mt-2 flex items-start justify-between gap-4">
           <div>
             <h3 className="text-lg font-semibold">Przysiady — technika</h3>
-            <p className="mt-1 text-sm text-muted-foreground">3 serie × 10 powtórzeń. Skupimy się na głębokości i pozycji kolan.</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              3 serie × 10 powtórzeń. Skupimy się na głębokości i pozycji kolan.
+            </p>
           </div>
           <div className="rounded-2xl bg-tint p-3">
             <Dumbbell className="h-6 w-6 text-primary-deep" />
@@ -73,10 +83,18 @@ function TodayPage() {
 
       {/* Co mówią dane */}
       <section className="mt-5 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">Co mówią Twoje dane</p>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">
+          Co mówią Twoje dane
+        </p>
         <ul className="mt-3 space-y-3">
-          <Insight title="Tętno spoczynkowe stabilne" body="Od 14 dni utrzymuje się w okolicach 58 bpm — dobry sygnał regeneracji." />
-          <Insight title="Forma przysiadu rośnie" body="Średni Form Score: 72 → 81 w ostatnich 2 tygodniach. Brawo!" />
+          <Insight
+            title="Tętno spoczynkowe stabilne"
+            body="Od 14 dni utrzymuje się w okolicach 58 bpm — dobry sygnał regeneracji."
+          />
+          <Insight
+            title="Forma przysiadu rośnie"
+            body="Średni Form Score: 72 → 81 w ostatnich 2 tygodniach. Brawo!"
+          />
         </ul>
       </section>
 
@@ -84,18 +102,34 @@ function TodayPage() {
       <section className="mt-5 mb-2 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">Ostatni trening</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
+              Ostatni trening
+            </p>
             <h3 className="mt-1 font-semibold">Przysiady · wczoraj</h3>
-            <p className="mt-1 text-sm text-muted-foreground">30 powtórzeń · Form Score 83 · głębokość OK</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              30 powtórzeń · Form Score 83 · głębokość OK
+            </p>
           </div>
-          <Link to="/postepy" className="text-sm font-medium text-primary">Zobacz</Link>
+          <Link to="/postepy" className="text-sm font-medium text-primary">
+            Zobacz
+          </Link>
         </div>
       </section>
     </div>
   );
 }
 
-function Metric({ icon: Icon, label, value, unit }: { icon: any; label: string; value: string; unit: string }) {
+function Metric({
+  icon: Icon,
+  label,
+  value,
+  unit,
+}: {
+  icon: any;
+  label: string;
+  value: string;
+  unit: string;
+}) {
   return (
     <div className="rounded-2xl bg-tint/60 p-3">
       <Icon className="mx-auto mb-1 h-4 w-4 text-primary-deep" />

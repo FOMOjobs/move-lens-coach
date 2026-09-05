@@ -159,7 +159,11 @@ export async function decryptJson<T>(payload: string, secret: string, pin: strin
 
   const key = await deriveKey(secret, pin, salt);
   const body = new Uint8Array(
-    await subtle().decrypt({ name: "AES-GCM", iv: iv as BufferSource }, key, cipher as BufferSource),
+    await subtle().decrypt(
+      { name: "AES-GCM", iv: iv as BufferSource },
+      key,
+      cipher as BufferSource,
+    ),
   );
   const plain = flags & FLAG_GZIP ? await gunzip(body) : body;
   return JSON.parse(new TextDecoder().decode(plain)) as T;

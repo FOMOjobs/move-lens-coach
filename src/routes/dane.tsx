@@ -1,6 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Apple, Activity, FileText, Upload, Heart, Footprints, Stethoscope, FlaskConical, CheckCircle2, ArrowRight, Printer, Dumbbell, ShieldCheck, Lock } from "lucide-react";
+import {
+  Apple,
+  Activity,
+  FileText,
+  Upload,
+  Heart,
+  Footprints,
+  Stethoscope,
+  FlaskConical,
+  CheckCircle2,
+  ArrowRight,
+  Printer,
+  Dumbbell,
+  ShieldCheck,
+  Lock,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buildMovementSummary, type MovementSummary } from "@/lib/health/doctorSummary";
 import { bpWeekSummary, type BpSummary } from "@/lib/health/bloodPressure";
@@ -10,7 +25,11 @@ export const Route = createFileRoute("/dane")({
   head: () => ({
     meta: [
       { title: "Dane — MoveLens" },
-      { name: "description", content: "Twoje dane o zdrowiu w jednym miejscu. Import z Apple Health, Google Fit i wyników badań." },
+      {
+        name: "description",
+        content:
+          "Twoje dane o zdrowiu w jednym miejscu. Import z Apple Health, Google Fit i wyników badań.",
+      },
     ],
   }),
   component: DataPage,
@@ -79,7 +98,9 @@ function DataPage() {
 
       {/* Najważniejsze wskaźniki */}
       <section className="mt-6 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Najważniejsze wskaźniki</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          Najważniejsze wskaźniki
+        </h2>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <Indicator icon={Heart} label="Tętno spoczynkowe" value="58" unit="bpm" status="good" />
           <Indicator
@@ -90,14 +111,30 @@ function DataPage() {
             status="good"
             hint={movement?.avgFormRecent == null ? "wykonaj trening" : undefined}
           />
-          <Indicator icon={Footprints} label="Aktywność" value="6 240" unit="kroków" status="warn" hint="poniżej celu" />
-          <Indicator icon={FlaskConical} label="Witamina D" value="22" unit="ng/ml" status="warn" hint="lekko obniżona" />
+          <Indicator
+            icon={Footprints}
+            label="Aktywność"
+            value="6 240"
+            unit="kroków"
+            status="warn"
+            hint="poniżej celu"
+          />
+          <Indicator
+            icon={FlaskConical}
+            label="Witamina D"
+            value="22"
+            unit="ng/ml"
+            status="warn"
+            hint="lekko obniżona"
+          />
         </div>
       </section>
 
       {/* Wnioski */}
       <section className="mt-5 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Wnioski</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          Wnioski
+        </h2>
         <ul className="mt-3 space-y-3">
           <Insight
             title="Regeneracja jest stabilna"
@@ -116,13 +153,45 @@ function DataPage() {
 
       {/* Oś czasu */}
       <section className="mt-5 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Oś czasu zdrowia</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          Oś czasu zdrowia
+        </h2>
         <ol className="mt-4 space-y-4 border-l border-hairline pl-5">
-          <Timeline icon={Activity} date="Dziś" title="6 240 kroków" body="Niska aktywność — krótszy spacer." color="warn" />
-          <Timeline icon={Heart} date="Wczoraj" title="Trening: przysiady" body="30 powtórzeń, Form Score 83." color="good" />
-          <Timeline icon={Heart} date="Wczoraj rano" title="Ciśnienie 118/76" body="W normie domowej. Dzienniczek uzupełniony." color="good" />
-          <Timeline icon={FlaskConical} date="3 dni temu" title="Wyniki badań" body="Morfologia w normie. Witamina D obniżona." color="warn" />
-          <Timeline icon={Stethoscope} date="2 tygodnie temu" title="Wizyta — fizjoterapia" body="Plan mobilności bioder." color="good" />
+          <Timeline
+            icon={Activity}
+            date="Dziś"
+            title="6 240 kroków"
+            body="Niska aktywność — krótszy spacer."
+            color="warn"
+          />
+          <Timeline
+            icon={Heart}
+            date="Wczoraj"
+            title="Trening: przysiady"
+            body="30 powtórzeń, Form Score 83."
+            color="good"
+          />
+          <Timeline
+            icon={Heart}
+            date="Wczoraj rano"
+            title="Ciśnienie 118/76"
+            body="W normie domowej. Dzienniczek uzupełniony."
+            color="good"
+          />
+          <Timeline
+            icon={FlaskConical}
+            date="3 dni temu"
+            title="Wyniki badań"
+            body="Morfologia w normie. Witamina D obniżona."
+            color="warn"
+          />
+          <Timeline
+            icon={Stethoscope}
+            date="2 tygodnie temu"
+            title="Wizyta — fizjoterapia"
+            body="Plan mobilności bioder."
+            color="good"
+          />
         </ol>
       </section>
 
@@ -130,7 +199,8 @@ function DataPage() {
       <section className="mt-5 mb-2 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
         <h2 className="text-base font-semibold">Podsumowanie dla lekarza</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Wygeneruj 1-stronicowy raport z najważniejszymi wskaźnikami i trendami — do pokazania na wizycie.
+          Wygeneruj 1-stronicowy raport z najważniejszymi wskaźnikami i trendami — do pokazania na
+          wizycie.
         </p>
         <button
           onClick={() => setDoctorOpen(true)}
@@ -255,10 +325,27 @@ function Insight({ title, body }: { title: string; body: string }) {
   );
 }
 
-function Timeline({ icon: Icon, date, title, body, color }: { icon: any; date: string; title: string; body: string; color: "good" | "warn" }) {
+function Timeline({
+  icon: Icon,
+  date,
+  title,
+  body,
+  color,
+}: {
+  icon: any;
+  date: string;
+  title: string;
+  body: string;
+  color: "good" | "warn";
+}) {
   return (
     <li className="relative">
-      <span className={cn("absolute -left-[27px] flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-card", color === "good" ? "bg-good" : "bg-warn")}>
+      <span
+        className={cn(
+          "absolute -left-[27px] flex h-4 w-4 items-center justify-center rounded-full ring-4 ring-card",
+          color === "good" ? "bg-good" : "bg-warn",
+        )}
+      >
         <Icon className="h-2.5 w-2.5 text-white" />
       </span>
       <p className="text-xs uppercase tracking-wider text-muted-foreground">{date}</p>
@@ -275,38 +362,65 @@ function DoctorSheet({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-black/50 backdrop-blur-sm sm:items-center sm:justify-center">
-      <div id="doctor-print" className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-card p-6 sm:rounded-3xl">
+      <div
+        id="doctor-print"
+        className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-card p-6 sm:rounded-3xl"
+      >
         <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-hairline print:hidden sm:hidden" />
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">Podsumowanie dla lekarza</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">
+              Podsumowanie dla lekarza
+            </p>
             <h2 className="text-xl font-semibold">Jan Kowalski · 34 lata</h2>
-            <p className="text-xs text-muted-foreground">Wygenerowano {new Date().toLocaleDateString("pl-PL")} · MoveLens</p>
+            <p className="text-xs text-muted-foreground">
+              Wygenerowano {new Date().toLocaleDateString("pl-PL")} · MoveLens
+            </p>
           </div>
-          <button onClick={onClose} className="rounded-full bg-tint px-3 py-1 text-xs print:hidden">Zamknij</button>
+          <button onClick={onClose} className="rounded-full bg-tint px-3 py-1 text-xs print:hidden">
+            Zamknij
+          </button>
         </div>
 
         {/* Realne pomiary MoveLens */}
         <Section title="Jakość ruchu — pomiar MoveLens (kamera)">
           {movement.sessionCount > 0 ? (
             <>
-              <Row k="Sesje przysiadu" v={`${movement.sessionCount} (łącznie ${movement.totalReps} powt.)`} />
-              {movement.avgFormRecent != null && <Row k="Form Score (ost. sesje)" v={`${movement.avgFormRecent} / 100`} />}
-              {movement.formTrend != null && (
-                <Row k="Trend jakości" v={`${movement.formTrend > 0 ? "+" : ""}${movement.formTrend} pkt`} />
+              <Row
+                k="Sesje przysiadu"
+                v={`${movement.sessionCount} (łącznie ${movement.totalReps} powt.)`}
+              />
+              {movement.avgFormRecent != null && (
+                <Row k="Form Score (ost. sesje)" v={`${movement.avgFormRecent} / 100`} />
               )}
-              {movement.avgDepthRecent != null && <Row k="Głębokość (kąt kolana w dole)" v={`${movement.avgDepthRecent}°`} />}
-              {movement.symmetryAvg != null && <Row k="Asymetria kolan (śr.)" v={`${movement.symmetryAvg}°`} />}
+              {movement.formTrend != null && (
+                <Row
+                  k="Trend jakości"
+                  v={`${movement.formTrend > 0 ? "+" : ""}${movement.formTrend} pkt`}
+                />
+              )}
+              {movement.avgDepthRecent != null && (
+                <Row k="Głębokość (kąt kolana w dole)" v={`${movement.avgDepthRecent}°`} />
+              )}
+              {movement.symmetryAvg != null && (
+                <Row k="Asymetria kolan (śr.)" v={`${movement.symmetryAvg}°`} />
+              )}
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">Brak zapisanych sesji — wykonaj trening w zakładce „Ćwicz".</p>
+            <p className="text-sm text-muted-foreground">
+              Brak zapisanych sesji — wykonaj trening w zakładce „Ćwicz".
+            </p>
           )}
         </Section>
 
         <Section title="Testy kliniczne ruchu">
           {movement.tests.length > 0 ? (
             movement.tests.map((t) => (
-              <Row key={t.kind} k={`${t.label} (${t.dateLabel})`} v={`${t.valueLabel} · ${t.bandLabel}`} />
+              <Row
+                key={t.kind}
+                k={`${t.label} (${t.dateLabel})`}
+                v={`${t.valueLabel} · ${t.bandLabel}`}
+              />
             ))
           ) : (
             <p className="text-sm text-muted-foreground">
@@ -320,16 +434,24 @@ function DoctorSheet({ onClose }: { onClose: () => void }) {
           {bp.filled > 0 ? (
             <>
               {bp.morningAvg && (
-                <Row k={`Rano (śr. z ${bp.morningAvg.n})`} v={`${bp.morningAvg.sys}/${bp.morningAvg.dia} mmHg`} />
+                <Row
+                  k={`Rano (śr. z ${bp.morningAvg.n})`}
+                  v={`${bp.morningAvg.sys}/${bp.morningAvg.dia} mmHg`}
+                />
               )}
               {bp.eveningAvg && (
-                <Row k={`Wieczorem (śr. z ${bp.eveningAvg.n})`} v={`${bp.eveningAvg.sys}/${bp.eveningAvg.dia} mmHg`} />
+                <Row
+                  k={`Wieczorem (śr. z ${bp.eveningAvg.n})`}
+                  v={`${bp.eveningAvg.sys}/${bp.eveningAvg.dia} mmHg`}
+                />
               )}
               <Row k="Kompletność zapisu" v={`${bp.filled} z 14 pomiarów`} />
               {bp.elevated && <Row k="Uwaga" v="śr. ≥ 135/85 (norma domowa) ⚠" />}
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">Brak pomiarów — dzienniczek w zakładce „Dane".</p>
+            <p className="text-sm text-muted-foreground">
+              Brak pomiarów — dzienniczek w zakładce „Dane".
+            </p>
           )}
         </Section>
 
@@ -354,10 +476,13 @@ function DoctorSheet({ onClose }: { onClose: () => void }) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-muted-foreground">Za mało danych na obserwacje — wykonaj trening lub test.</p>
+            <p className="text-sm text-muted-foreground">
+              Za mało danych na obserwacje — wykonaj trening lub test.
+            </p>
           )}
           <p className="mt-2 text-xs text-muted-foreground">
-            Pomiary z kamery wykonano lokalnie na urządzeniu użytkownika. Materiał informacyjny — nie stanowi diagnozy.
+            Pomiary z kamery wykonano lokalnie na urządzeniu użytkownika. Materiał informacyjny —
+            nie stanowi diagnozy.
           </p>
         </Section>
 

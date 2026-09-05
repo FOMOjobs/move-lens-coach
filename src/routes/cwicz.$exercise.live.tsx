@@ -9,12 +9,7 @@ import { POSE_CONNECTIONS } from "@/lib/pose/geometry";
 import { VoiceCoach } from "@/lib/pose/voiceCoach";
 import { TestLive } from "@/components/TestLive";
 import { saveSquatSession } from "@/lib/health/results";
-import {
-  createTvTransport,
-  savedPairCode,
-  type TvChip,
-  type TvTransport,
-} from "@/lib/live/tvLink";
+import { createTvTransport, savedPairCode, type TvChip, type TvTransport } from "@/lib/live/tvLink";
 
 export const Route = createFileRoute("/cwicz/$exercise/live")({
   head: () => ({
@@ -65,7 +60,10 @@ function LivePage() {
   // Tykanie czasu sesji — tylko gdy trwa
   useEffect(() => {
     if (phase !== "running") return;
-    const id = setInterval(() => setElapsed(Math.floor((Date.now() - startedAtRef.current) / 1000)), 1000);
+    const id = setInterval(
+      () => setElapsed(Math.floor((Date.now() - startedAtRef.current) / 1000)),
+      1000,
+    );
     return () => clearInterval(id);
   }, [phase]);
 
@@ -112,7 +110,7 @@ function LivePage() {
       // Wpasowanie "object-cover": używamy współrzędnych znormalizowanych 0..1
       const mirror = facing === "user";
 
-      const px = (x: number) => (mirror ? (1 - x) : x) * W;
+      const px = (x: number) => (mirror ? 1 - x : x) * W;
       const py = (y: number) => y * H;
 
       const flagged = fb?.flaggedLandmarks ?? new Set<number>();
@@ -189,7 +187,13 @@ function LivePage() {
         `Koniec serii. ${s.reps} powtórzeń, forma ${Math.round(s.avgFormScore)} na sto. ${s.topTip}`,
       );
     } else {
-      setSummary({ reps: simpleCount, avgDepthAngle: 0, avgFormScore: 0, topTip: "Brawo! Sesja zapisana.", symmetryDelta: 0 });
+      setSummary({
+        reps: simpleCount,
+        avgDepthAngle: 0,
+        avgFormScore: 0,
+        topTip: "Brawo! Sesja zapisana.",
+        symmetryDelta: 0,
+      });
     }
   };
 
@@ -253,21 +257,39 @@ function LivePage() {
     const chips: TvChip[] =
       isSquat && feedback?.ready
         ? [
-            { label: "Glebokosc", status: feedback.chips.depth.status, hint: feedback.chips.depth.hint },
-            { label: "Kolana", status: feedback.chips.knees.status, hint: feedback.chips.knees.hint },
+            {
+              label: "Glebokosc",
+              status: feedback.chips.depth.status,
+              hint: feedback.chips.depth.hint,
+            },
+            {
+              label: "Kolana",
+              status: feedback.chips.knees.status,
+              hint: feedback.chips.knees.hint,
+            },
             { label: "Plecy", status: feedback.chips.back.status, hint: feedback.chips.back.hint },
-            { label: "Tempo", status: feedback.chips.tempo.status, hint: feedback.chips.tempo.hint },
+            {
+              label: "Tempo",
+              status: feedback.chips.tempo.status,
+              hint: feedback.chips.tempo.hint,
+            },
           ]
         : [];
     // Jedno zdanie korekty: priorytet jak u trenera glosowego.
     const worst =
       feedback && !feedback.ready
         ? feedback.coach
-        : (chips.find((c) => c.status === "bad") ?? chips.find((c) => c.status === "warn"))?.hint ??
-          null;
+        : ((chips.find((c) => c.status === "bad") ?? chips.find((c) => c.status === "warn"))
+            ?.hint ?? null);
     tv.post({
       exercise: name,
-      phase: summary ? "summary" : phase === "running" ? "live" : phase === "paused" ? "paused" : "idle",
+      phase: summary
+        ? "summary"
+        : phase === "running"
+          ? "live"
+          : phase === "paused"
+            ? "paused"
+            : "idle",
       reps,
       seconds: elapsed,
       formScore: isSquat && feedback?.ready ? Math.round(formScore) : null,
@@ -303,7 +325,9 @@ function LivePage() {
           <X className="h-5 w-5" />
         </button>
         <div className="flex-1 text-center">
-          <div className="text-xs uppercase tracking-wider text-white/70">{name} · {mm}:{ss}</div>
+          <div className="text-xs uppercase tracking-wider text-white/70">
+            {name} · {mm}:{ss}
+          </div>
           <div className="text-5xl font-semibold tabular-nums leading-tight">{reps}</div>
           <div className="text-[10px] uppercase tracking-wider text-white/60">powtórzeń</div>
         </div>
@@ -350,7 +374,9 @@ function LivePage() {
           {status === "error" && (
             <div className="max-w-sm">
               <p className="text-base font-semibold">Nie udało się włączyć kamery</p>
-              <p className="mt-2 text-sm text-white/70">{error ?? "Sprawdź uprawnienia w przeglądarce."}</p>
+              <p className="mt-2 text-sm text-white/70">
+                {error ?? "Sprawdź uprawnienia w przeglądarce."}
+              </p>
               <button
                 onClick={() => navigate({ to: "/cwicz" })}
                 className="mt-4 rounded-2xl bg-white/15 px-4 py-2 text-sm"
@@ -382,14 +408,19 @@ function LivePage() {
       )}
 
       {/* Coaching ustawienia — gdy sylwetka nie jest pewnie w kadrze (po starcie) */}
-      {isSquat && status === "ready" && !summary && phase === "running" && feedback && !feedback.ready && (
-        <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-8 text-center">
-          <div className="mx-auto max-w-xs rounded-3xl bg-black/55 px-5 py-4 backdrop-blur">
-            <p className="text-base font-semibold">Ustaw się do analizy</p>
-            <p className="mt-1 text-sm text-white/80">{feedback.coach}</p>
+      {isSquat &&
+        status === "ready" &&
+        !summary &&
+        phase === "running" &&
+        feedback &&
+        !feedback.ready && (
+          <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-8 text-center">
+            <div className="mx-auto max-w-xs rounded-3xl bg-black/55 px-5 py-4 backdrop-blur">
+              <p className="text-base font-semibold">Ustaw się do analizy</p>
+              <p className="mt-1 text-sm text-white/80">{feedback.coach}</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
       {isSquat && status === "ready" && !summary && phase === "running" && !feedback && (
         <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 px-8 text-center">
           <div className="mx-auto max-w-xs rounded-3xl bg-black/55 px-5 py-4 backdrop-blur">
@@ -465,7 +496,15 @@ function LivePage() {
   );
 }
 
-function Chip({ label, status, hint }: { label: string; status: "ok" | "warn" | "bad" | "idle"; hint: string }) {
+function Chip({
+  label,
+  status,
+  hint,
+}: {
+  label: string;
+  status: "ok" | "warn" | "bad" | "idle";
+  hint: string;
+}) {
   const cls =
     status === "warn"
       ? "bg-warn/90 text-foreground"
@@ -475,7 +514,9 @@ function Chip({ label, status, hint }: { label: string; status: "ok" | "warn" | 
           ? "bg-white/15 text-white/80"
           : "bg-primary/90 text-primary-foreground";
   return (
-    <div className={cn("rounded-full px-3 py-1.5 text-xs font-medium shadow-sm backdrop-blur", cls)}>
+    <div
+      className={cn("rounded-full px-3 py-1.5 text-xs font-medium shadow-sm backdrop-blur", cls)}
+    >
       <span className="opacity-80">{label}:</span> <span className="font-semibold">{hint}</span>
     </div>
   );
@@ -498,11 +539,17 @@ function SummarySheet({
         <p className="mt-1 text-sm text-muted-foreground">Dobra robota — oto skrót:</p>
         <div className="mt-4 grid grid-cols-3 gap-3 text-center">
           <Stat label="Powtórzenia" value={String(summary.reps)} />
-          <Stat label="Średnia głębokość" value={`${Math.round(summary.avgDepthAngle)}°`} hint="kąt kolana" />
+          <Stat
+            label="Średnia głębokość"
+            value={`${Math.round(summary.avgDepthAngle)}°`}
+            hint="kąt kolana"
+          />
           <Stat label="Forma" value={String(Math.round(summary.avgFormScore))} hint="/ 100" />
         </div>
         <div className="mt-5 rounded-2xl bg-tint p-4">
-          <p className="text-xs uppercase tracking-wider text-primary-deep">Najważniejsze do poprawy</p>
+          <p className="text-xs uppercase tracking-wider text-primary-deep">
+            Najważniejsze do poprawy
+          </p>
           <p className="mt-1 text-sm">{summary.topTip}</p>
         </div>
         <div className="mt-5 flex gap-3">
@@ -528,7 +575,9 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
   return (
     <div className="rounded-2xl border border-hairline p-3">
       <div className="text-2xl font-semibold tabular-nums">{value}</div>
-      {hint && <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{hint}</div>}
+      {hint && (
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{hint}</div>
+      )}
       <div className="mt-1 text-xs text-muted-foreground">{label}</div>
     </div>
   );

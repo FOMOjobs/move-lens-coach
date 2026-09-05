@@ -69,8 +69,8 @@ function VerdictPage() {
         </section>
 
         <p className="mt-4 rounded-2xl bg-tint/70 p-4 text-sm text-muted-foreground">
-          To jedyna treść interpretacyjna, jaką MoveLens pokazuje. Aplikacja sama nie ocenia
-          wyników — pochodzi ona w całości od lekarza i jest opatrzona jego podpisem.
+          To jedyna treść interpretacyjna, jaką MoveLens pokazuje. Aplikacja sama nie ocenia wyników
+          — pochodzi ona w całości od lekarza i jest opatrzona jego podpisem.
         </p>
 
         <Link

@@ -95,7 +95,10 @@ function ConsultPage() {
   return (
     <div className="px-5 pt-8">
       <header className="mb-5">
-        <Link to="/dane" className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-primary">
+        <Link
+          to="/dane"
+          className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-primary"
+        >
           <ArrowLeft className="h-4 w-4" /> Dane
         </Link>
         <h1 className="text-3xl font-semibold tracking-tight">Paczka dla lekarza</h1>
@@ -114,15 +117,17 @@ function ConsultPage() {
           <li className="flex gap-2">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>
-              Paczka jest szyfrowana <span className="font-medium text-foreground">na Twoim telefonie</span>{" "}
-              (AES-GCM). Klucz nigdy nie trafia na żaden serwer.
+              Paczka jest szyfrowana{" "}
+              <span className="font-medium text-foreground">na Twoim telefonie</span> (AES-GCM).
+              Klucz nigdy nie trafia na żaden serwer.
             </span>
           </li>
           <li className="flex gap-2">
             <Link2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>
               Dane jadą w części linku po znaku <code className="font-mono">#</code>, której
-              przeglądarka <span className="font-medium text-foreground">z zasady nie wysyła na serwer</span>.
+              przeglądarka{" "}
+              <span className="font-medium text-foreground">z zasady nie wysyła na serwer</span>.
             </span>
           </li>
           <li className="flex gap-2">
@@ -188,7 +193,9 @@ function ConsultPage() {
               type="number"
               inputMode="numeric"
               value={meta.age ?? ""}
-              onChange={(e) => setMeta({ ...meta, age: e.target.value === "" ? null : Number(e.target.value) })}
+              onChange={(e) =>
+                setMeta({ ...meta, age: e.target.value === "" ? null : Number(e.target.value) })
+              }
               className="w-full rounded-2xl border border-hairline bg-background px-3 py-2.5 text-sm tabular-nums"
             />
           </label>
@@ -233,7 +240,10 @@ function ConsultPage() {
             Odpowiedzi lekarza
           </h2>
           {verdicts.map((v) => (
-            <div key={v.packageId} className="mb-3 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
+            <div
+              key={v.packageId}
+              className="mb-3 rounded-3xl border border-hairline bg-card p-5 shadow-sm"
+            >
               <p className="flex items-center gap-2 text-sm font-semibold">
                 <Stethoscope className="h-4 w-4 text-primary-deep" /> {v.doctor}
               </p>

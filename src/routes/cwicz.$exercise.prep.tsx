@@ -23,24 +23,54 @@ interface PrepStep {
 }
 
 const DEFAULT_STEPS: PrepStep[] = [
-  { title: "Oprzyj telefon", body: "Postaw go pionowo lub poziomo o stabilny przedmiot — tak, żeby się nie ruszał." },
-  { title: "Stań bokiem do kamery", body: "Sylwetka z boku ujawnia najwięcej o technice — szczególnie w przysiadzie." },
-  { title: "Odsuń się na 2–3 m", body: "Cała sylwetka od głowy do stóp powinna być widoczna w kadrze." },
+  {
+    title: "Oprzyj telefon",
+    body: "Postaw go pionowo lub poziomo o stabilny przedmiot — tak, żeby się nie ruszał.",
+  },
+  {
+    title: "Stań bokiem do kamery",
+    body: "Sylwetka z boku ujawnia najwięcej o technice — szczególnie w przysiadzie.",
+  },
+  {
+    title: "Odsuń się na 2–3 m",
+    body: "Cała sylwetka od głowy do stóp powinna być widoczna w kadrze.",
+  },
   { title: "Dobre światło", body: "Najlepiej dzienne, bez ostrego kontrastu za plecami." },
 ];
 
 const STEPS: Record<string, PrepStep[]> = {
   "test-wstawania": [
-    { title: "Przygotuj krzesło", body: "Stabilne, bez podłokietników, oparte o ścianę — bokiem do kamery." },
-    { title: "Oprzyj telefon 2–3 m od krzesła", body: "W kadrze ma być cała sylwetka podczas siedzenia i stania." },
-    { title: "Usiądź, ręce skrzyżuj na klatce", body: "Tak wygląda standardowy protokół testu — ręce nie pomagają." },
-    { title: "Masz 30 sekund", body: "Wstawaj do pełnego wyprostu i siadaj — jak najwięcej razy. Aplikacja liczy i mierzy czas." },
+    {
+      title: "Przygotuj krzesło",
+      body: "Stabilne, bez podłokietników, oparte o ścianę — bokiem do kamery.",
+    },
+    {
+      title: "Oprzyj telefon 2–3 m od krzesła",
+      body: "W kadrze ma być cała sylwetka podczas siedzenia i stania.",
+    },
+    {
+      title: "Usiądź, ręce skrzyżuj na klatce",
+      body: "Tak wygląda standardowy protokół testu — ręce nie pomagają.",
+    },
+    {
+      title: "Masz 30 sekund",
+      body: "Wstawaj do pełnego wyprostu i siadaj — jak najwięcej razy. Aplikacja liczy i mierzy czas.",
+    },
   ],
   "test-rownowagi": [
     { title: "Oprzyj telefon", body: "Stabilnie, najlepiej na wysokości bioder." },
-    { title: "Stań PRZODEM do kamery", body: "Obie nogi w całości w kadrze — to ważne dla pomiaru." },
-    { title: "Unieś jedną stopę", body: "Nie opieraj jej o drugą nogę. Czas rusza automatycznie po uniesieniu." },
-    { title: "Stój jak najdłużej", body: "Pomiar kończy się, gdy stopa dotknie podłogi (maks. 30 s)." },
+    {
+      title: "Stań PRZODEM do kamery",
+      body: "Obie nogi w całości w kadrze — to ważne dla pomiaru.",
+    },
+    {
+      title: "Unieś jedną stopę",
+      body: "Nie opieraj jej o drugą nogę. Czas rusza automatycznie po uniesieniu.",
+    },
+    {
+      title: "Stój jak najdłużej",
+      body: "Pomiar kończy się, gdy stopa dotknie podłogi (maks. 30 s).",
+    },
   ],
 };
 
@@ -68,7 +98,8 @@ function PrepPage() {
       <div className="mt-6 flex items-start gap-3 rounded-2xl bg-tint/70 p-4 text-sm">
         <Shield className="mt-0.5 h-5 w-5 shrink-0 text-primary-deep" />
         <p className="text-foreground">
-          Analiza odbywa się <strong>lokalnie</strong> na Twoim urządzeniu. Obraz z kamery nigdzie nie jest wysyłany.
+          Analiza odbywa się <strong>lokalnie</strong> na Twoim urządzeniu. Obraz z kamery nigdzie
+          nie jest wysyłany.
         </p>
       </div>
 

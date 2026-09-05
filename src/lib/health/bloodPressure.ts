@@ -55,7 +55,12 @@ export function defaultSlot(d = new Date()): BpSlot {
   return d.getHours() < 14 ? "morning" : "evening";
 }
 
-export function saveBpReading(r: { sys: number; dia: number; pulse?: number; slot: BpSlot }): BpReading {
+export function saveBpReading(r: {
+  sys: number;
+  dia: number;
+  pulse?: number;
+  slot: BpSlot;
+}): BpReading {
   const now = new Date();
   const item: BpReading = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,

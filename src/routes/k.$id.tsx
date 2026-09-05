@@ -138,9 +138,10 @@ function UnlockedView({
         packageId: pkg.id,
         doctor: doctor.trim() || "Lekarz",
         signedISO: new Date().toISOString(),
-        decisions: Object.entries(decisions).map(
-          ([flagId, accepted]): VerdictDecision => ({ flagId, accepted }),
-        ),
+        decisions: Object.entries(decisions).map(([flagId, accepted]): VerdictDecision => ({
+          flagId,
+          accepted,
+        })),
         note: note.trim(),
       };
       setVerdictUrl(await createVerdictLink(verdict, incoming.secret, pin));
@@ -172,8 +173,9 @@ function UnlockedView({
       <div className="mb-6 flex items-start gap-3 rounded-2xl bg-tint/70 p-4">
         <Info className="mt-0.5 h-5 w-5 shrink-0 text-primary-deep" />
         <p className="text-sm text-muted-foreground">
-          Poniższe pozycje to <span className="font-medium text-foreground">zestawienia danych do rozważenia</span>,
-          a nie rozpoznania. MoveLens nie interpretuje wyników wobec pacjenta — pacjent zobaczy
+          Poniższe pozycje to{" "}
+          <span className="font-medium text-foreground">zestawienia danych do rozważenia</span>, a
+          nie rozpoznania. MoveLens nie interpretuje wyników wobec pacjenta — pacjent zobaczy
           wyłącznie to, co Pan/Pani zatwierdzi i podpisze.
         </p>
       </div>
@@ -241,7 +243,10 @@ function UnlockedView({
         </h2>
 
         {pkg.labs.map((panel) => (
-          <div key={panel.id} className="mb-3 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
+          <div
+            key={panel.id}
+            className="mb-3 rounded-3xl border border-hairline bg-card p-5 shadow-sm"
+          >
             <p className="text-xs uppercase tracking-wider text-muted-foreground">
               {new Date(panel.day).toLocaleDateString("pl-PL")}
               {panel.lab ? ` · ${panel.lab}` : ""}
@@ -256,11 +261,17 @@ function UnlockedView({
                       <td className="py-2 pr-3 text-right font-medium tabular-nums">
                         {v.value} {v.unit}
                       </td>
-                      <td className="py-2 pr-3 text-right text-muted-foreground">{rangeLabel(v)}</td>
+                      <td className="py-2 pr-3 text-right text-muted-foreground">
+                        {rangeLabel(v)}
+                      </td>
                       <td
                         className={cn(
                           "py-2 text-right text-xs",
-                          s === "in" ? "text-good" : s === "unknown" ? "text-muted-foreground" : "text-warn",
+                          s === "in"
+                            ? "text-good"
+                            : s === "unknown"
+                              ? "text-muted-foreground"
+                              : "text-warn",
                         )}
                       >
                         {STATUS_LABEL[s]}
@@ -276,8 +287,12 @@ function UnlockedView({
         <div className="mb-3 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
           <p className="font-semibold">Dane ruchowe</p>
           <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-            <li>Sesje: {m.sessionCount} · łącznie powtórzeń: {m.totalReps}</li>
-            {m.avgFormRecent != null && <li>Średni Form Score (ostatnie): {m.avgFormRecent}/100</li>}
+            <li>
+              Sesje: {m.sessionCount} · łącznie powtórzeń: {m.totalReps}
+            </li>
+            {m.avgFormRecent != null && (
+              <li>Średni Form Score (ostatnie): {m.avgFormRecent}/100</li>
+            )}
             {m.formTrend != null && <li>Zmiana Form Score: {m.formTrend} pkt</li>}
             {m.avgDepthRecent != null && <li>Średni kąt kolana w dole: {m.avgDepthRecent}°</li>}
             {m.symmetryAvg != null && <li>Asymetria kolan: {m.symmetryAvg}°</li>}
@@ -337,8 +352,8 @@ function UnlockedView({
       <section className="mb-8 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
         <h2 className="font-semibold">Odpowiedź dla pacjenta</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          To jedyna treść, jaką pacjent zobaczy w aplikacji. Zostanie oznaczona Pana/Pani podpisem
-          i datą.
+          To jedyna treść, jaką pacjent zobaczy w aplikacji. Zostanie oznaczona Pana/Pani podpisem i
+          datą.
         </p>
 
         <label className="mt-4 block">

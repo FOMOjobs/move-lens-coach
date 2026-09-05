@@ -1,6 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, Dumbbell, Activity, Minus, Footprints, Armchair, PersonStanding, MonitorPlay, Unplug } from "lucide-react";
+import {
+  ArrowRight,
+  Dumbbell,
+  Activity,
+  Minus,
+  Footprints,
+  Armchair,
+  PersonStanding,
+  MonitorPlay,
+  Unplug,
+} from "lucide-react";
 import { randomPairCode, savePairCode, savedPairCode } from "@/lib/live/tvLink";
 
 export const Route = createFileRoute("/cwicz/")({
@@ -79,7 +89,8 @@ function ExerciseListPage() {
       <header className="mb-5">
         <h1 className="text-3xl font-semibold tracking-tight">Ćwicz</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Wybierz ćwiczenie. „Przysiad" jest w pełni analizowany — pozostałe na razie z liczeniem powtórzeń.
+          Wybierz ćwiczenie. „Przysiad" jest w pełni analizowany — pozostałe na razie z liczeniem
+          powtórzeń.
         </p>
       </header>
 
@@ -93,7 +104,8 @@ function ExerciseListPage() {
         Testy zdrowia ruchu
       </h2>
       <p className="mb-3 text-sm text-muted-foreground">
-        Zwalidowane testy kliniczne, które normalnie wykonuje się w gabinecie — teraz w Twoim telefonie.
+        Zwalidowane testy kliniczne, które normalnie wykonuje się w gabinecie — teraz w Twoim
+        telefonie.
       </p>
       <ul className="space-y-3 pb-2">
         {tests.map((ex) => (
@@ -156,8 +168,8 @@ function TvModeCard() {
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
             Na telewizorze (albo w drugim oknie przeglądarki) otwórz{" "}
-            <span className="font-medium text-foreground">/tv</span> i wpisz ten kod. Trening zacznie
-            się na nim pokazywać sam.
+            <span className="font-medium text-foreground">/tv</span> i wpisz ten kod. Trening
+            zacznie się na nim pokazywać sam.
           </p>
           <div className="mt-3 flex gap-2">
             <a

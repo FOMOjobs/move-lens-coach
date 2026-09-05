@@ -17,7 +17,10 @@ export const Route = createFileRoute("/tv")({
   head: () => ({
     meta: [
       { title: "MoveLens na dużym ekranie" },
-      { name: "description", content: "Ekran zewnętrzny MoveLens — duże liczby, bez obrazu z kamery." },
+      {
+        name: "description",
+        content: "Ekran zewnętrzny MoveLens — duże liczby, bez obrazu z kamery.",
+      },
     ],
   }),
   validateSearch: (search: Record<string, unknown>) => ({
@@ -100,12 +103,7 @@ function TvPage() {
           <p className="font-mono text-[4vw] font-semibold tabular-nums">
             {mm}:{ss}
           </p>
-          <p
-            className={cn(
-              "text-[1.6vw] font-medium",
-              stale ? "text-warn" : "text-good",
-            )}
-          >
+          <p className={cn("text-[1.6vw] font-medium", stale ? "text-warn" : "text-good")}>
             {stale ? "brak połączenia" : `połączono · kod ${code}`}
           </p>
         </div>
@@ -115,9 +113,7 @@ function TvPage() {
       {unsupported ? (
         <Centered>
           <WifiOff className="mx-auto h-[6vw] w-[6vw] text-warn" />
-          <p className="mt-[2vh] text-[2.5vw]">
-            Ta przeglądarka nie obsługuje kanału lokalnego.
-          </p>
+          <p className="mt-[2vh] text-[2.5vw]">Ta przeglądarka nie obsługuje kanału lokalnego.</p>
           <p className="mt-[1vh] text-[1.6vw] text-white/60">
             Otwórz ten adres w Chrome, Edge lub Safari 15.4+.
           </p>
