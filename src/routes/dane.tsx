@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Apple, Activity, FileText, Upload, Heart, Footprints, Stethoscope, FlaskConical, CheckCircle2, ArrowRight, Printer, Dumbbell } from "lucide-react";
+import { Apple, Activity, FileText, Upload, Heart, Footprints, Stethoscope, FlaskConical, CheckCircle2, ArrowRight, Printer, Dumbbell, ShieldCheck, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buildMovementSummary, type MovementSummary } from "@/lib/health/doctorSummary";
 import { bpWeekSummary, type BpSummary } from "@/lib/health/bloodPressure";
@@ -57,14 +57,21 @@ function DataPage() {
           connected={imported.google}
           onToggle={toggle}
         />
-        <SourceCard
-          k="labs"
-          icon={FileText}
-          title="Wyniki badań"
-          desc="Wgraj PDF z laboratorium"
-          connected={imported.labs}
-          onToggle={toggle}
-        />
+        <Link
+          to="/wyniki"
+          className="flex items-center gap-3 rounded-3xl border border-hairline bg-card p-4 shadow-sm"
+        >
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-tint">
+            <FileText className="h-5 w-5 text-primary-deep" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-semibold">Wyniki badań</span>
+            <span className="block text-sm text-muted-foreground">
+              Zdjęcie lub wpis ręczny · odczyt lokalnie
+            </span>
+          </span>
+          <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground" />
+        </Link>
       </section>
 
       {/* Dzienniczek ciśnienia (dane realne, lokalne) */}
@@ -131,6 +138,23 @@ function DataPage() {
         >
           Generuj podsumowanie <ArrowRight className="h-4 w-4" />
         </button>
+      </section>
+
+      {/* Bezpieczne przekazanie danych lekarzowi */}
+      <section className="mt-5 mb-2 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
+        <h2 className="flex items-center gap-2 text-base font-semibold">
+          <Lock className="h-4 w-4 text-primary-deep" /> Paczka dla lekarza
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Zaszyfrowany pakiet: wyniki badań, dane ruchowe i ciśnienie. Otworzy go wyłącznie osoba,
+          której dasz link i PIN — a interpretację zobaczysz dopiero po podpisie lekarza.
+        </p>
+        <Link
+          to="/konsultacja"
+          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-hairline px-4 py-3 text-sm font-semibold"
+        >
+          Przygotuj paczkę <ShieldCheck className="h-4 w-4" />
+        </Link>
       </section>
 
       <p className="mt-4 text-center text-xs text-muted-foreground">

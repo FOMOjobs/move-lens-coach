@@ -9,16 +9,41 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WynikiRouteImport } from './routes/wyniki'
+import { Route as WerdyktRouteImport } from './routes/werdykt'
+import { Route as TvRouteImport } from './routes/tv'
 import { Route as PostepyRouteImport } from './routes/postepy'
+import { Route as KonsultacjaRouteImport } from './routes/konsultacja'
 import { Route as DaneRouteImport } from './routes/dane'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CwiczIndexRouteImport } from './routes/cwicz.index'
+import { Route as KIdRouteImport } from './routes/k.$id'
 import { Route as CwiczExercisePrepRouteImport } from './routes/cwicz.$exercise.prep'
 import { Route as CwiczExerciseLiveRouteImport } from './routes/cwicz.$exercise.live'
 
+const WynikiRoute = WynikiRouteImport.update({
+  id: '/wyniki',
+  path: '/wyniki',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WerdyktRoute = WerdyktRouteImport.update({
+  id: '/werdykt',
+  path: '/werdykt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TvRoute = TvRouteImport.update({
+  id: '/tv',
+  path: '/tv',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PostepyRoute = PostepyRouteImport.update({
   id: '/postepy',
   path: '/postepy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KonsultacjaRoute = KonsultacjaRouteImport.update({
+  id: '/konsultacja',
+  path: '/konsultacja',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DaneRoute = DaneRouteImport.update({
@@ -36,6 +61,11 @@ const CwiczIndexRoute = CwiczIndexRouteImport.update({
   path: '/cwicz/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KIdRoute = KIdRouteImport.update({
+  id: '/k/$id',
+  path: '/k/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CwiczExercisePrepRoute = CwiczExercisePrepRouteImport.update({
   id: '/cwicz/$exercise/prep',
   path: '/cwicz/$exercise/prep',
@@ -50,7 +80,12 @@ const CwiczExerciseLiveRoute = CwiczExerciseLiveRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dane': typeof DaneRoute
+  '/konsultacja': typeof KonsultacjaRoute
   '/postepy': typeof PostepyRoute
+  '/tv': typeof TvRoute
+  '/werdykt': typeof WerdyktRoute
+  '/wyniki': typeof WynikiRoute
+  '/k/$id': typeof KIdRoute
   '/cwicz/': typeof CwiczIndexRoute
   '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
   '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
@@ -58,7 +93,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dane': typeof DaneRoute
+  '/konsultacja': typeof KonsultacjaRoute
   '/postepy': typeof PostepyRoute
+  '/tv': typeof TvRoute
+  '/werdykt': typeof WerdyktRoute
+  '/wyniki': typeof WynikiRoute
+  '/k/$id': typeof KIdRoute
   '/cwicz': typeof CwiczIndexRoute
   '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
   '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
@@ -67,7 +107,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dane': typeof DaneRoute
+  '/konsultacja': typeof KonsultacjaRoute
   '/postepy': typeof PostepyRoute
+  '/tv': typeof TvRoute
+  '/werdykt': typeof WerdyktRoute
+  '/wyniki': typeof WynikiRoute
+  '/k/$id': typeof KIdRoute
   '/cwicz/': typeof CwiczIndexRoute
   '/cwicz/$exercise/live': typeof CwiczExerciseLiveRoute
   '/cwicz/$exercise/prep': typeof CwiczExercisePrepRoute
@@ -77,7 +122,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dane'
+    | '/konsultacja'
     | '/postepy'
+    | '/tv'
+    | '/werdykt'
+    | '/wyniki'
+    | '/k/$id'
     | '/cwicz/'
     | '/cwicz/$exercise/live'
     | '/cwicz/$exercise/prep'
@@ -85,7 +135,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dane'
+    | '/konsultacja'
     | '/postepy'
+    | '/tv'
+    | '/werdykt'
+    | '/wyniki'
+    | '/k/$id'
     | '/cwicz'
     | '/cwicz/$exercise/live'
     | '/cwicz/$exercise/prep'
@@ -93,7 +148,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/dane'
+    | '/konsultacja'
     | '/postepy'
+    | '/tv'
+    | '/werdykt'
+    | '/wyniki'
+    | '/k/$id'
     | '/cwicz/'
     | '/cwicz/$exercise/live'
     | '/cwicz/$exercise/prep'
@@ -102,7 +162,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DaneRoute: typeof DaneRoute
+  KonsultacjaRoute: typeof KonsultacjaRoute
   PostepyRoute: typeof PostepyRoute
+  TvRoute: typeof TvRoute
+  WerdyktRoute: typeof WerdyktRoute
+  WynikiRoute: typeof WynikiRoute
+  KIdRoute: typeof KIdRoute
   CwiczIndexRoute: typeof CwiczIndexRoute
   CwiczExerciseLiveRoute: typeof CwiczExerciseLiveRoute
   CwiczExercisePrepRoute: typeof CwiczExercisePrepRoute
@@ -110,11 +175,39 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wyniki': {
+      id: '/wyniki'
+      path: '/wyniki'
+      fullPath: '/wyniki'
+      preLoaderRoute: typeof WynikiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/werdykt': {
+      id: '/werdykt'
+      path: '/werdykt'
+      fullPath: '/werdykt'
+      preLoaderRoute: typeof WerdyktRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tv': {
+      id: '/tv'
+      path: '/tv'
+      fullPath: '/tv'
+      preLoaderRoute: typeof TvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/postepy': {
       id: '/postepy'
       path: '/postepy'
       fullPath: '/postepy'
       preLoaderRoute: typeof PostepyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/konsultacja': {
+      id: '/konsultacja'
+      path: '/konsultacja'
+      fullPath: '/konsultacja'
+      preLoaderRoute: typeof KonsultacjaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dane': {
@@ -138,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CwiczIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/k/$id': {
+      id: '/k/$id'
+      path: '/k/$id'
+      fullPath: '/k/$id'
+      preLoaderRoute: typeof KIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cwicz/$exercise/prep': {
       id: '/cwicz/$exercise/prep'
       path: '/cwicz/$exercise/prep'
@@ -158,7 +258,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DaneRoute: DaneRoute,
+  KonsultacjaRoute: KonsultacjaRoute,
   PostepyRoute: PostepyRoute,
+  TvRoute: TvRoute,
+  WerdyktRoute: WerdyktRoute,
+  WynikiRoute: WynikiRoute,
+  KIdRoute: KIdRoute,
   CwiczIndexRoute: CwiczIndexRoute,
   CwiczExerciseLiveRoute: CwiczExerciseLiveRoute,
   CwiczExercisePrepRoute: CwiczExercisePrepRoute,

@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Dumbbell, Activity, Minus, Footprints, Armchair, PersonStanding } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, Dumbbell, Activity, Minus, Footprints, Armchair, PersonStanding, MonitorPlay, Unplug } from "lucide-react";
+import { randomPairCode, savePairCode, savedPairCode } from "@/lib/live/tvLink";
 
 export const Route = createFileRoute("/cwicz/")({
   head: () => ({
@@ -99,10 +101,95 @@ function ExerciseListPage() {
         ))}
       </ul>
 
+      <TvModeCard />
+
       <p className="mt-5 text-center text-xs text-muted-foreground">
         Analiza odbywa się lokalnie na Twoim urządzeniu. Obraz nigdzie nie jest wysyłany.
       </p>
     </div>
+  );
+}
+
+/**
+ * Tryb telewizora — parowanie z dużym ekranem.
+ *
+ * Sens: przy przysiadzie stoisz 2–3 m od telefonu i bokiem, więc ekranu
+ * i tak nie widzisz. Na duży ekran wysyłamy WYŁĄCZNIE liczby — obraz
+ * z kamery zostaje na telefonie.
+ */
+function TvModeCard() {
+  const [code, setCode] = useState<string | null>(null);
+  useEffect(() => setCode(savedPairCode()), []);
+
+  function enable() {
+    const c = randomPairCode();
+    savePairCode(c);
+    setCode(c);
+  }
+
+  function disable() {
+    savePairCode(null);
+    setCode(null);
+  }
+
+  return (
+    <section className="mt-7 rounded-3xl border border-hairline bg-card p-5 shadow-sm">
+      <div className="flex items-start gap-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-tint">
+          <MonitorPlay className="h-5 w-5 text-primary-deep" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="text-base font-semibold">Tryb telewizora</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Duże liczby na dużym ekranie — bez mrużenia oczu z drugiego końca pokoju.
+          </p>
+        </div>
+      </div>
+
+      {code ? (
+        <div className="mt-4">
+          <div className="rounded-2xl bg-tint/70 p-4 text-center">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Kod parowania</p>
+            <p className="mt-1 font-mono text-4xl font-semibold tracking-[0.3em] tabular-nums">
+              {code}
+            </p>
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Na telewizorze (albo w drugim oknie przeglądarki) otwórz{" "}
+            <span className="font-medium text-foreground">/tv</span> i wpisz ten kod. Trening zacznie
+            się na nim pokazywać sam.
+          </p>
+          <div className="mt-3 flex gap-2">
+            <a
+              href={`/tv?kod=${code}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 rounded-2xl bg-primary px-4 py-3 text-center text-sm font-medium text-primary-foreground"
+            >
+              Otwórz ekran TV
+            </a>
+            <button
+              onClick={disable}
+              aria-label="Rozłącz telewizor"
+              className="flex items-center justify-center rounded-2xl border border-hairline px-4"
+            >
+              <Unplug className="h-4 w-4 text-muted-foreground" />
+            </button>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Na duży ekran trafiają wyłącznie liczby: powtórzenia, jakość formy i jedno zdanie
+            korekty. Obraz z kamery zostaje na tym telefonie.
+          </p>
+        </div>
+      ) : (
+        <button
+          onClick={enable}
+          className="mt-4 w-full rounded-2xl border border-hairline px-4 py-3 text-sm font-medium"
+        >
+          Włącz tryb telewizora
+        </button>
+      )}
+    </section>
   );
 }
 

@@ -130,9 +130,21 @@ function AppFrame() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   // Pełnoekranowy tryb treningu na żywo: ukrywamy nav i padding
   const isLive = /^\/cwicz\/[^/]+\/live$/.test(pathname);
+  // Ekran telewizora: pelnoekranowy, bez ramki telefonu i bez nawigacji.
+  const isTv = pathname === "/tv";
+  // Widok lekarza: otwierany na laptopie w gabinecie, wiec szerszy niz telefon.
+  const isDoctor = pathname.startsWith("/k/");
 
-  if (isLive) {
+  if (isLive || isTv) {
     return <Outlet />;
+  }
+
+  if (isDoctor) {
+    return (
+      <div className="min-h-screen">
+        <Outlet />
+      </div>
+    );
   }
 
   return (

@@ -9,6 +9,12 @@ import { POSE_CONNECTIONS } from "@/lib/pose/geometry";
 import { VoiceCoach } from "@/lib/pose/voiceCoach";
 import { TestLive } from "@/components/TestLive";
 import { saveSquatSession } from "@/lib/health/results";
+import {
+  createTvTransport,
+  savedPairCode,
+  type TvChip,
+  type TvTransport,
+} from "@/lib/live/tvLink";
 
 export const Route = createFileRoute("/cwicz/$exercise/live")({
   head: () => ({
@@ -225,6 +231,52 @@ function LivePage() {
 
   const formScore = feedback?.formScore ?? 0;
   const reps = isSquat ? displayReps : simpleCount;
+
+  /* --- Ekran zewnetrzny (telewizor) -------------------------------------
+     Wysylamy WYLACZNIE policzone liczby. Obraz z kamery nigdy nie opuszcza
+     tego urzadzenia, wiec obietnica prywatnosci obowiazuje takze tutaj.
+     Kanal jest calkowicie bierny, dopoki uzytkownik nie sparuje ekranu.   */
+  const tvRef = useRef<TvTransport | null>(null);
+  const [tvCode, setTvCode] = useState<string | null>(null);
+  useEffect(() => setTvCode(savedPairCode()), []);
+  useEffect(() => {
+    if (!tvCode) return;
+    tvRef.current = createTvTransport(tvCode);
+    return () => {
+      tvRef.current?.close();
+      tvRef.current = null;
+    };
+  }, [tvCode]);
+  useEffect(() => {
+    const tv = tvRef.current;
+    if (!tv) return;
+    const chips: TvChip[] =
+      isSquat && feedback?.ready
+        ? [
+            { label: "Glebokosc", status: feedback.chips.depth.status, hint: feedback.chips.depth.hint },
+            { label: "Kolana", status: feedback.chips.knees.status, hint: feedback.chips.knees.hint },
+            { label: "Plecy", status: feedback.chips.back.status, hint: feedback.chips.back.hint },
+            { label: "Tempo", status: feedback.chips.tempo.status, hint: feedback.chips.tempo.hint },
+          ]
+        : [];
+    // Jedno zdanie korekty: priorytet jak u trenera glosowego.
+    const worst =
+      feedback && !feedback.ready
+        ? feedback.coach
+        : (chips.find((c) => c.status === "bad") ?? chips.find((c) => c.status === "warn"))?.hint ??
+          null;
+    tv.post({
+      exercise: name,
+      phase: summary ? "summary" : phase === "running" ? "live" : phase === "paused" ? "paused" : "idle",
+      reps,
+      seconds: elapsed,
+      formScore: isSquat && feedback?.ready ? Math.round(formScore) : null,
+      coach: worst,
+      chips,
+      hr: null,
+      at: Date.now(),
+    });
+  }, [feedback, reps, elapsed, phase, summary, name, isSquat, formScore]);
 
   return (
     <div className="fixed inset-0 z-50 bg-black text-white">
