@@ -170,7 +170,7 @@ export const DEMO_PANELS: { day: string; lab: string; values: LabValue[] }[] = [
         loinc: "2276-4",
         name: "Ferrytyna",
         unit: "µg/l",
-        value: 41,
+        value: 18,
         refLow: 30,
         refHigh: 400,
         refSource: "sheet",
